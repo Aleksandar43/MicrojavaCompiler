@@ -1,0 +1,9 @@
+while
+9+5=14
+~
+Hello, world!!!
+x_1_y
+//evo ga komentar !@#$%^&*()_+-=
+'A',	'!'
+'1234'
+[indeks] // komentar :P '1234'

@@ -8,6 +8,7 @@ import java_cup.runtime.*;
 %cup
 %line
 %column
+%debug
 
 %{
 StringBuffer string = new StringBuffer();
@@ -22,7 +23,7 @@ private Symbol symbol(int type, Object value) {
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 WhiteSpace = {LineTerminator} | [ \t\f\b]
-Comment = "//" {InputCharacter}* {LineTerminator}
+Comment = "//" {InputCharacter}*
 Identifier = [:jletter:] ([:jletterdigit:]|_)*
 NumConst = [0-9]+
 Character = [ -~]
@@ -36,16 +37,18 @@ BoolConst = "true" | "false"
 "break" {return symbol(sym.BREAK);}
 "class" {return symbol(sym.CLASS);}
 "else" {return symbol(sym.ELSE);}
-"const" {return symbol(sym.CONST);}
 "if" {return symbol(sym.IF);}
 "new" {return symbol(sym.NEW);}
 "print" {return symbol(sym.PRINT);}
 "read" {return symbol(sym.READ);}
 "return" {return symbol(sym.RETURN);}
 "void" {return symbol(sym.VOID);}
+"do" {return symbol(sym.DO);}
+"while" {return symbol(sym.WHILE);}
 "extends" {return symbol(sym.EXTENDS);}
 "continue" {return symbol(sym.CONTINUE);}
-/* "for" {return symbol(sym.FOR);}
+/* "const" {return symbol(sym.CONST);}
+"for" {return symbol(sym.FOR);}
 "static" {return symbol(sym.STATIC);}
 "int" {return symbol(sym.INT);}
 "char" {return symbol(sym.CHAR);}
@@ -92,9 +95,7 @@ BoolConst = "true" | "false"
 "'"{Character}"'" {return symbol(sym.CHARCONST, yycharat(1));}
 {BoolConst} {return symbol(sym.BOOLCONST, yytext());}
 {Identifier} { return symbol(sym.IDENTIFIER, yytext());}
-{Comment} {}
-/* Comment na kraju fajla */
-"//".* {}
+{Comment} { /* comment */ }
 {WhiteSpace} { /* nothing */ }
 /* error fallback */
 . {System.out.println("Unrecognized character "+yytext()+" at line "+(yyline+1)+", column "+yycolumn);}
