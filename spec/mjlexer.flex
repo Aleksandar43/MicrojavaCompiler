@@ -88,7 +88,7 @@ BoolConst = "true" | "false"
 "..." {return symbol(sym.TRI_TACKE);}
 */
 
-{NumConst} { return symbol(sym.NUMCONST);}
+{NumConst} { return symbol(sym.NUMCONST, Integer.parseInt(yytext()));}
 "'"{Character}"'" {return symbol(sym.CHARCONST, yycharat(1));}
 {BoolConst} {return symbol(sym.BOOLCONST, yytext());}
 {Identifier} { return symbol(sym.IDENTIFIER, yytext());}
