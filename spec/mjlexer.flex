@@ -47,8 +47,9 @@ BoolConst = "true" | "false"
 "while" {return symbol(sym.WHILE);}
 "extends" {return symbol(sym.EXTENDS);}
 "continue" {return symbol(sym.CONTINUE);}
-/* "const" {return symbol(sym.CONST);}
-"for" {return symbol(sym.FOR);}
+"const" {return symbol(sym.CONST);}
+
+/* "for" {return symbol(sym.FOR);}
 "static" {return symbol(sym.STATIC);}
 "int" {return symbol(sym.INT);}
 "char" {return symbol(sym.CHAR);}

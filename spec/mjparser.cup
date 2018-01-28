@@ -1,11 +1,72 @@
 package rs.ac.bg.etf.pp1;
-import java_cup.runtime.*;
 
-terminal PROGRAM, BREAK, CLASS, ELSE, IF, NEW, PRINT, READ, RETURN, VOID, DO, WHILE, EXTENDS, CONTINUE;
+terminal PROGRAM, BREAK, CLASS, ELSE, IF, NEW, PRINT, READ, RETURN, VOID, DO, WHILE, EXTENDS, CONTINUE, CONST;
 terminal PLUS,MINUS,ASTERISK,SLASH,PERCENT,EQUALEQUAL,NOTEQUAL,GREATER,GREATEREQUAL,LESS,LESSEQUAL,AND,OR,EQUAL,PLUSPLUS,MINUSMINUS,SEMICOLON,COMMA,DOT,LPAREN,RPAREN,LSQUARE,RSQUARE,LBRACE,RBRACE;
 terminal Integer NUMCONST;
 terminal Character CHARCONST;
 terminal Boolean BOOLCONST;
 terminal String IDENTIFIER;
+
 non terminal program;
-program::=PROGRAM;
+non terminal programDeclList,methodDecl;
+non terminal programDecl;
+non terminal constDecl,varDecl,classDecl;
+non terminal type,constant;
+non terminal varList;
+non terminal var;
+non terminal classExtension,localVarDecl,classMethodDecl;
+non terminal returnType,formPars,statement;
+non terminal formParsList;
+non terminal designatorStatement;
+non terminal designator,expr,actPars,condition;
+non terminal condTerm,condFact,relop;
+non terminal term,factor;
+non terminal addop,mulop;
+non terminal statementList;
+
+program::=PROGRAM IDENTIFIER programDeclList LBRACE methodDecl RBRACE;
+programDeclList::=programDecl programDeclList | /*eps*/;
+programDecl::=constDecl | varDecl | classDecl;
+constDecl::=CONST type IDENTIFIER EQUAL constant SEMICOLON;
+type::=IDENTIFIER;
+constant::=NUMCONST | CHARCONST | BOOLCONST;
+varDecl::=type varList SEMICOLON;
+varList::=var COMMA varList | var;
+var::=IDENTIFIER | IDENTIFIER LSQUARE RSQUARE;
+	//extends clause? ClassVarDecl?
+classDecl::=CLASS IDENTIFIER classExtension LBRACE localVarDecl classMethodDecl RBRACE SEMICOLON;
+classExtension::=EXTENDS type | /*eps*/;
+localVarDecl::= varDecl localVarDecl | /*eps*/;
+classMethodDecl::=LBRACE methodDecl RBRACE | /*eps*/;
+methodDecl::=returnType IDENTIFIER LPAREN formPars RPAREN localVarDecl LBRACE statementList RBRACE methodDecl | /*eps*/;
+returnType::=type | VOID;
+formPars::=formParsList | /*eps*/;
+formParsList::=type var COMMA formParsList | type var;
+statementList::=statement statementList | /*eps*/;
+statement::=designatorStatement SEMICOLON;
+designatorStatement::=designator EQUAL expr
+					| designator PLUSPLUS
+					| designator MINUSMINUS
+					| designator LPAREN actPars RPAREN
+					| BREAK
+					| CONTINUE
+					| READ LPAREN designator RPAREN
+					| PRINT LPAREN expr COMMA NUMCONST RPAREN
+					| PRINT LPAREN expr RPAREN //default width is 0 - prints without leading spaces
+					| RETURN
+					| RETURN expr
+					| IF LPAREN condition RPAREN statement
+					| IF LPAREN condition RPAREN statement ELSE statement
+					| DO statement WHILE LPAREN condition RPAREN
+					| LBRACE statement RBRACE;
+actPars::=expr COMMA actPars | /*eps*/;
+condition::=condTerm | condTerm OR condTerm;
+condTerm::=condFact | condFact AND condFact;
+condFact::=expr relop expr;
+relop::=EQUALEQUAL | NOTEQUAL | GREATER | GREATEREQUAL | LESS | LESSEQUAL;
+expr::=term | MINUS term | expr addop term;
+term::=factor | term mulop factor;
+factor::= designator | constant | LPAREN expr RPAREN | NEW type | NEW type LSQUARE expr RSQUARE;
+designator::=IDENTIFIER | designator DOT IDENTIFIER | designator LSQUARE expr RSQUARE;
+addop::=PLUS | MINUS;
+mulop::=ASTERISK | SLASH | PERCENT;
