@@ -1,12 +1,13 @@
 // generated with ast extension for cup
 // version 0.8
-// 31/0/2018 2:6:39
+// 31/0/2018 18:43:32
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public interface Visitor { 
 
+    public void visit(ConstAssignment constAssignment);
     public void visit(ConstDecl constDecl);
     public void visit(Statement statement);
     public void visit(Expr expr);
@@ -34,6 +35,7 @@ public interface Visitor {
     public void visit(Term term);
     public void visit(ClassExtension classExtension);
     public void visit(Condition condition);
+    public void visit(ConstAssignmentList constAssignmentList);
     public void visit(Mulop mulop);
     public void visit(CondTerm condTerm);
     public void visit(Var var);
@@ -46,6 +48,7 @@ public interface Visitor {
     public void visit(DesignatorDerived3 DesignatorDerived3);
     public void visit(DesignatorDerived2 DesignatorDerived2);
     public void visit(DesignatorDerived1 DesignatorDerived1);
+    public void visit(FactorDerived6 FactorDerived6);
     public void visit(FactorDerived5 FactorDerived5);
     public void visit(FactorDerived4 FactorDerived4);
     public void visit(FactorDerived3 FactorDerived3);
@@ -67,6 +70,7 @@ public interface Visitor {
     public void visit(CondTermDerived1 CondTermDerived1);
     public void visit(ConditionDerived2 ConditionDerived2);
     public void visit(ConditionDerived1 ConditionDerived1);
+    public void visit(ActParsDerived3 ActParsDerived3);
     public void visit(ActParsDerived2 ActParsDerived2);
     public void visit(ActParsDerived1 ActParsDerived1);
     public void visit(DesignatorStatementDerived15 DesignatorStatementDerived15);
@@ -111,6 +115,9 @@ public interface Visitor {
     public void visit(ConstantDerived2 ConstantDerived2);
     public void visit(ConstantDerived1 ConstantDerived1);
     public void visit(TypeDerived1 TypeDerived1);
+    public void visit(ConstAssignmentDerived1 ConstAssignmentDerived1);
+    public void visit(ConstAssignmentListDerived2 ConstAssignmentListDerived2);
+    public void visit(ConstAssignmentListDerived1 ConstAssignmentListDerived1);
     public void visit(ConstDeclDerived1 ConstDeclDerived1);
     public void visit(ProgramDeclDerived3 ProgramDeclDerived3);
     public void visit(ProgramDeclDerived2 ProgramDeclDerived2);

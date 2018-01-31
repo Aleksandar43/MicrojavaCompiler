@@ -8,7 +8,7 @@ import java_cup.runtime.*;
 %cup
 %line
 %column
-%debug
+%standalone
 
 %{
 StringBuffer string = new StringBuffer();

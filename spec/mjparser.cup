@@ -1,5 +1,48 @@
 package rs.ac.bg.etf.pp1;
 import rs.ac.bg.etf.pp1.ast.*;
+import java_cup.runtime.*;
+
+parser code {:
+	
+	boolean errorDetected = false;
+    // slede redefinisani metodi za prijavu gresaka radi izmene teksta poruke
+     
+    public void report_fatal_error(String message, Object info) throws java.lang.Exception {
+      done_parsing();
+      report_error(message, info);
+    }
+  
+    public void syntax_error(Symbol cur_token) {
+        report_error("\nSintaksna greska", cur_token);
+    }
+  
+    public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
+        report_fatal_error("Fatalna greska, parsiranje se ne moze nastaviti", cur_token);
+    }
+
+    public void report_error(String message, Object info) {
+    	errorDetected = true;
+    	StringBuilder msg = new StringBuilder(message); 
+    	if (info instanceof Symbol)
+            msg.append (" na liniji ").append(((Symbol)info).left).append(": ").append(((Symbol) info).value);
+        System.out.println(msg.toString());
+    }
+    
+    public void report_info(String message, Object info) {
+    	StringBuilder msg = new StringBuilder(message); 
+    	if (info instanceof Symbol)
+            msg.append (" na liniji ").append(((Symbol)info).left).append(": ").append(((Symbol) info).value);
+        System.out.println(msg.toString());
+    }
+    
+:}
+
+scan with {:
+	Symbol s = this.getScanner().next_token();
+	if (s != null && s.value != null) 
+		System.out.println(s.toString() + " " + s.value.toString());
+	return s;
+:}
 
 terminal PROGRAM, BREAK, CLASS, ELSE, IF, NEW, PRINT, READ, RETURN, VOID, DO, WHILE, EXTENDS, CONTINUE, CONST;
 terminal PLUS,MINUS,ASTERISK,SLASH,PERCENT,EQUALEQUAL,NOTEQUAL,GREATER,GREATEREQUAL,LESS,LESSEQUAL,AND,OR,EQUAL,PLUSPLUS,MINUSMINUS,SEMICOLON,COMMA,DOT,LPAREN,RPAREN,LSQUARE,RSQUARE,LBRACE,RBRACE;
@@ -24,11 +67,14 @@ non terminal condTerm, condFact, relop;
 non terminal term, factor;
 non terminal addop, mulop;
 non terminal statementList;
+non terminal constAssignmentList, constAssignment;
 
 program::=PROGRAM IDENTIFIER programDeclList LBRACE methodDecl RBRACE;
 programDeclList::=programDecl programDeclList | /*eps*/;
 programDecl::=constDecl | varDecl | classDecl;
-constDecl::=CONST type IDENTIFIER EQUAL constant SEMICOLON;
+constDecl::=CONST type constAssignmentList SEMICOLON;
+constAssignmentList::=constAssignment COMMA constAssignmentList | constAssignment;
+constAssignment::=IDENTIFIER EQUAL constant;
 type::=IDENTIFIER;
 constant::=NUMCONST | CHARCONST | BOOLCONST;
 varDecl::=type varList SEMICOLON;
@@ -60,14 +106,14 @@ designatorStatement::=designator EQUAL expr
 					| IF LPAREN condition RPAREN statement ELSE statement
 					| DO statement WHILE LPAREN condition RPAREN
 					| LBRACE statement RBRACE;
-actPars::=expr COMMA actPars | /*eps*/;
+actPars::=expr COMMA actPars | expr | /*eps*/;
 condition::=condTerm | condTerm OR condTerm;
 condTerm::=condFact | condFact AND condFact;
 condFact::=expr relop expr;
 relop::=EQUALEQUAL | NOTEQUAL | GREATER | GREATEREQUAL | LESS | LESSEQUAL;
 expr::=term | MINUS term | expr addop term;
 term::=factor | term mulop factor;
-factor::= designator | constant | LPAREN expr RPAREN | NEW type | NEW type LSQUARE expr RSQUARE;
+factor::= designator | constant | LPAREN expr RPAREN | designator LPAREN actPars RPAREN | NEW type | NEW type LSQUARE expr RSQUARE;
 designator::=IDENTIFIER | designator DOT IDENTIFIER | designator LSQUARE expr RSQUARE;
 addop::=PLUS | MINUS;
 mulop::=ASTERISK | SLASH | PERCENT;

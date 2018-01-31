@@ -1,12 +1,13 @@
 // generated with ast extension for cup
 // version 0.8
-// 31/0/2018 2:6:39
+// 31/0/2018 18:43:32
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public abstract class VisitorAdaptor implements Visitor { 
 
+    public void visit(ConstAssignment constAssignment) { }
     public void visit(ConstDecl constDecl) { }
     public void visit(Statement statement) { }
     public void visit(Expr expr) { }
@@ -34,6 +35,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(Term term) { }
     public void visit(ClassExtension classExtension) { }
     public void visit(Condition condition) { }
+    public void visit(ConstAssignmentList constAssignmentList) { }
     public void visit(Mulop mulop) { }
     public void visit(CondTerm condTerm) { }
     public void visit(Var var) { }
@@ -46,6 +48,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(DesignatorDerived3 DesignatorDerived3) { visit(); }
     public void visit(DesignatorDerived2 DesignatorDerived2) { visit(); }
     public void visit(DesignatorDerived1 DesignatorDerived1) { visit(); }
+    public void visit(FactorDerived6 FactorDerived6) { visit(); }
     public void visit(FactorDerived5 FactorDerived5) { visit(); }
     public void visit(FactorDerived4 FactorDerived4) { visit(); }
     public void visit(FactorDerived3 FactorDerived3) { visit(); }
@@ -67,6 +70,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(CondTermDerived1 CondTermDerived1) { visit(); }
     public void visit(ConditionDerived2 ConditionDerived2) { visit(); }
     public void visit(ConditionDerived1 ConditionDerived1) { visit(); }
+    public void visit(ActParsDerived3 ActParsDerived3) { visit(); }
     public void visit(ActParsDerived2 ActParsDerived2) { visit(); }
     public void visit(ActParsDerived1 ActParsDerived1) { visit(); }
     public void visit(DesignatorStatementDerived15 DesignatorStatementDerived15) { visit(); }
@@ -111,6 +115,9 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ConstantDerived2 ConstantDerived2) { visit(); }
     public void visit(ConstantDerived1 ConstantDerived1) { visit(); }
     public void visit(TypeDerived1 TypeDerived1) { visit(); }
+    public void visit(ConstAssignmentDerived1 ConstAssignmentDerived1) { visit(); }
+    public void visit(ConstAssignmentListDerived2 ConstAssignmentListDerived2) { visit(); }
+    public void visit(ConstAssignmentListDerived1 ConstAssignmentListDerived1) { visit(); }
     public void visit(ConstDeclDerived1 ConstDeclDerived1) { visit(); }
     public void visit(ProgramDeclDerived3 ProgramDeclDerived3) { visit(); }
     public void visit(ProgramDeclDerived2 ProgramDeclDerived2) { visit(); }

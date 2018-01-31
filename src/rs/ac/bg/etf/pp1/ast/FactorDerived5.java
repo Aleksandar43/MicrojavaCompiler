@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 31/0/2018 2:6:38
+// 31/0/2018 18:43:30
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,13 +8,10 @@ package rs.ac.bg.etf.pp1.ast;
 public class FactorDerived5 extends Factor {
 
     private Type type;
-    private Expr expr;
 
-    public FactorDerived5 (Type type, Expr expr) {
+    public FactorDerived5 (Type type) {
         this.type=type;
         if(type!=null) type.setParent(this);
-        this.expr=expr;
-        if(expr!=null) expr.setParent(this);
     }
 
     public Type getType() {
@@ -25,32 +22,21 @@ public class FactorDerived5 extends Factor {
         this.type=type;
     }
 
-    public Expr getExpr() {
-        return expr;
-    }
-
-    public void setExpr(Expr expr) {
-        this.expr=expr;
-    }
-
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
 
     public void childrenAccept(Visitor visitor) {
         if(type!=null) type.accept(visitor);
-        if(expr!=null) expr.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(type!=null) type.traverseTopDown(visitor);
-        if(expr!=null) expr.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(type!=null) type.traverseBottomUp(visitor);
-        if(expr!=null) expr.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -61,12 +47,6 @@ public class FactorDerived5 extends Factor {
 
         if(type!=null)
             buffer.append(type.toString("  "+tab));
-        else
-            buffer.append(tab+"  null");
-        buffer.append("\n");
-
-        if(expr!=null)
-            buffer.append(expr.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
