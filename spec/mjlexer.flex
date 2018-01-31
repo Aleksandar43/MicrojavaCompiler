@@ -94,7 +94,7 @@ BoolConst = "true" | "false"
 
 {NumConst} { return symbol(sym.NUMCONST, Integer.parseInt(yytext()));}
 "'"{Character}"'" {return symbol(sym.CHARCONST, yycharat(1));}
-{BoolConst} {return symbol(sym.BOOLCONST, yytext());}
+{BoolConst} {return symbol(sym.BOOLCONST, Boolean.parseBoolean(yytext()));}
 {Identifier} { return symbol(sym.IDENTIFIER, yytext());}
 {Comment} { /* comment */ }
 {WhiteSpace} { /* nothing */ }
