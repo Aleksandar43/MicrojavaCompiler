@@ -1,0 +1,88 @@
+package rs.ac.bg.etf.pp1;
+import rs.ac.bg.etf.pp1.ast.*;
+
+terminal PROGRAM, BREAK, CLASS, ELSE, IF, NEW, PRINT, READ, RETURN, VOID, DO, WHILE, EXTENDS, CONTINUE, CONST;
+terminal PLUS,MINUS,ASTERISK,SLASH,PERCENT,EQUALEQUAL,NOTEQUAL,GREATER,GREATEREQUAL,LESS,LESSEQUAL,AND,OR,EQUAL,PLUSPLUS,MINUSMINUS,SEMICOLON,COMMA,DOT,LPAREN,RPAREN,LSQUARE,RSQUARE,LBRACE,RBRACE;
+terminal Integer NUMCONST;
+terminal Character CHARCONST;
+terminal Boolean BOOLCONST;
+terminal String IDENTIFIER;
+
+non terminal Program program;
+non terminal ProgramDeclList programDeclList;
+nonterminal MethodDecl methodDecl;
+non terminal ProgramDecl programDecl;
+non terminal ConstDecl constDecl;
+nonterminal VarDecl varDecl;
+nonterminal ClassDecl classDecl;
+non terminal Type type;
+nonterminal Constant constant;
+non terminal VarList varList;
+non terminal Var var;
+non terminal ClassExtension classExtension;
+nonterminal LocalVarDecl localVarDecl;
+nonterminal ClassMethodDecl classMethodDecl;
+non terminal ReturnType returnType;
+nonterminal FormPars formPars;
+nonterminal Statement statement;
+non terminal FormParsList formParsList;
+non terminal DesignatorStatement designatorStatement;
+non terminal Designator designator;
+nonterminal Expr expr;
+nonterminal ActPars actPars;
+nonterminal Condition condition;
+non terminal CondTerm condTerm;
+nonterminal CondFact condFact;
+nonterminal Relop relop;
+non terminal Term term;
+nonterminal Factor factor;
+non terminal Addop addop;
+nonterminal Mulop mulop;
+non terminal StatementList statementList;
+
+program::=PROGRAM IDENTIFIER:I1 programDeclList:p2 LBRACE methodDecl:m3 RBRACE {: RESULT=new ProgramDerived1(I1, p2, m3); RESULT.setLine(I1left); :};
+programDeclList::=programDecl:p1 programDeclList:p2 {: RESULT=new ProgramDeclListDerived1(p1, p2); RESULT.setLine(p1left); :} | {: RESULT=new ProgramDeclListDerived2(); :} /*eps*/;
+programDecl::=constDecl:c1 {: RESULT=new ProgramDeclDerived1(c1); RESULT.setLine(c1left); :} | varDecl:v1 {: RESULT=new ProgramDeclDerived2(v1); RESULT.setLine(v1left); :} | classDecl:c1 {: RESULT=new ProgramDeclDerived3(c1); RESULT.setLine(c1left); :};
+constDecl::=CONST type:t1 IDENTIFIER:I2 EQUAL constant:c3 SEMICOLON {: RESULT=new ConstDeclDerived1(t1, I2, c3); RESULT.setLine(t1left); :};
+type::=IDENTIFIER:I1 {: RESULT=new TypeDerived1(I1); RESULT.setLine(I1left); :};
+constant::=NUMCONST:N1 {: RESULT=new ConstantDerived1(N1); RESULT.setLine(N1left); :} | CHARCONST:C1 {: RESULT=new ConstantDerived2(C1); RESULT.setLine(C1left); :} | BOOLCONST:B1 {: RESULT=new ConstantDerived3(B1); RESULT.setLine(B1left); :};
+varDecl::=type:t1 varList:v2 SEMICOLON {: RESULT=new VarDeclDerived1(t1, v2); RESULT.setLine(t1left); :};
+varList::=var:v1 COMMA varList:v2 {: RESULT=new VarListDerived1(v1, v2); RESULT.setLine(v1left); :} | var:v1 {: RESULT=new VarListDerived2(v1); RESULT.setLine(v1left); :};
+var::=IDENTIFIER:I1 {: RESULT=new VarDerived1(I1); RESULT.setLine(I1left); :} | IDENTIFIER:I1 LSQUARE RSQUARE {: RESULT=new VarDerived2(I1); RESULT.setLine(I1left); :};
+	//extends clause? ClassVarDecl?
+classDecl::=CLASS IDENTIFIER:I1 classExtension:c2 LBRACE localVarDecl:l3 classMethodDecl:c4 RBRACE SEMICOLON {: RESULT=new ClassDeclDerived1(I1, c2, l3, c4); RESULT.setLine(I1left); :};
+classExtension::=EXTENDS type:t1 {: RESULT=new ClassExtensionDerived1(t1); RESULT.setLine(t1left); :} | {: RESULT=new ClassExtensionDerived2(); :} /*eps*/;
+localVarDecl::= varDecl:v1 localVarDecl:l2 {: RESULT=new LocalVarDeclDerived1(v1, l2); RESULT.setLine(v1left); :} | {: RESULT=new LocalVarDeclDerived2(); :} /*eps*/;
+classMethodDecl::=LBRACE methodDecl:m1 RBRACE {: RESULT=new ClassMethodDeclDerived1(m1); RESULT.setLine(m1left); :} | {: RESULT=new ClassMethodDeclDerived2(); :} /*eps*/;
+methodDecl::=returnType:r1 IDENTIFIER:I2 LPAREN formPars:f3 RPAREN localVarDecl:l4 LBRACE statementList:s5 RBRACE methodDecl:m6 {: RESULT=new MethodDeclDerived1(r1, I2, f3, l4, s5, m6); RESULT.setLine(r1left); :} | {: RESULT=new MethodDeclDerived2(); :} /*eps*/;
+returnType::=type:t1 {: RESULT=new ReturnTypeDerived1(t1); RESULT.setLine(t1left); :} | VOID {: RESULT=new ReturnTypeDerived2(); :};
+formPars::=formParsList:f1 {: RESULT=new FormParsDerived1(f1); RESULT.setLine(f1left); :} | {: RESULT=new FormParsDerived2(); :} /*eps*/;
+formParsList::=type:t1 var:v2 COMMA formParsList:f3 {: RESULT=new FormParsListDerived1(t1, v2, f3); RESULT.setLine(t1left); :} | type:t1 var:v2 {: RESULT=new FormParsListDerived2(t1, v2); RESULT.setLine(t1left); :};
+statementList::=statement:s1 statementList:s2 {: RESULT=new StatementListDerived1(s1, s2); RESULT.setLine(s1left); :} | {: RESULT=new StatementListDerived2(); :} /*eps*/;
+statement::=designatorStatement:d1 SEMICOLON {: RESULT=new StatementDerived1(d1); RESULT.setLine(d1left); :};
+designatorStatement::=designator:d1 EQUAL expr:e2 {: RESULT=new DesignatorStatementDerived1(d1, e2); RESULT.setLine(d1left); :}
+					| designator:d1 PLUSPLUS {: RESULT=new DesignatorStatementDerived2(d1); RESULT.setLine(d1left); :}
+					| designator:d1 MINUSMINUS {: RESULT=new DesignatorStatementDerived3(d1); RESULT.setLine(d1left); :}
+					| designator:d1 LPAREN actPars:a2 RPAREN {: RESULT=new DesignatorStatementDerived4(d1, a2); RESULT.setLine(d1left); :}
+					| BREAK {: RESULT=new DesignatorStatementDerived5(); :}
+					| CONTINUE {: RESULT=new DesignatorStatementDerived6(); :}
+					| READ LPAREN designator:d1 RPAREN {: RESULT=new DesignatorStatementDerived7(d1); RESULT.setLine(d1left); :}
+					| PRINT LPAREN expr:e1 COMMA NUMCONST:N2 RPAREN {: RESULT=new DesignatorStatementDerived8(e1, N2); RESULT.setLine(e1left); :}
+					| PRINT LPAREN expr:e1 RPAREN {: RESULT=new DesignatorStatementDerived9(e1); RESULT.setLine(e1left); :} //default width is 0 - prints without leading spaces
+					| RETURN {: RESULT=new DesignatorStatementDerived10(); :}
+					| RETURN expr:e1 {: RESULT=new DesignatorStatementDerived11(e1); RESULT.setLine(e1left); :}
+					| IF LPAREN condition:c1 RPAREN statement:s2 {: RESULT=new DesignatorStatementDerived12(c1, s2); RESULT.setLine(c1left); :}
+					| IF LPAREN condition:c1 RPAREN statement:s2 ELSE statement:s3 {: RESULT=new DesignatorStatementDerived13(c1, s2, s3); RESULT.setLine(c1left); :}
+					| DO statement:s1 WHILE LPAREN condition:c2 RPAREN {: RESULT=new DesignatorStatementDerived14(s1, c2); RESULT.setLine(s1left); :}
+					| LBRACE statement:s1 RBRACE {: RESULT=new DesignatorStatementDerived15(s1); RESULT.setLine(s1left); :};
+actPars::=expr:e1 COMMA actPars:a2 {: RESULT=new ActParsDerived1(e1, a2); RESULT.setLine(e1left); :} | {: RESULT=new ActParsDerived2(); :} /*eps*/;
+condition::=condTerm:c1 {: RESULT=new ConditionDerived1(c1); RESULT.setLine(c1left); :} | condTerm:c1 OR condTerm:c2 {: RESULT=new ConditionDerived2(c1, c2); RESULT.setLine(c1left); :};
+condTerm::=condFact:c1 {: RESULT=new CondTermDerived1(c1); RESULT.setLine(c1left); :} | condFact:c1 AND condFact:c2 {: RESULT=new CondTermDerived2(c1, c2); RESULT.setLine(c1left); :};
+condFact::=expr:e1 relop:r2 expr:e3 {: RESULT=new CondFactDerived1(e1, r2, e3); RESULT.setLine(e1left); :};
+relop::=EQUALEQUAL {: RESULT=new RelopDerived1(); :} | NOTEQUAL {: RESULT=new RelopDerived2(); :} | GREATER {: RESULT=new RelopDerived3(); :} | GREATEREQUAL {: RESULT=new RelopDerived4(); :} | LESS {: RESULT=new RelopDerived5(); :} | LESSEQUAL {: RESULT=new RelopDerived6(); :};
+expr::=term:t1 {: RESULT=new ExprDerived1(t1); RESULT.setLine(t1left); :} | MINUS term:t1 {: RESULT=new ExprDerived2(t1); RESULT.setLine(t1left); :} | expr:e1 addop:a2 term:t3 {: RESULT=new ExprDerived3(e1, a2, t3); RESULT.setLine(e1left); :};
+term::=factor:f1 {: RESULT=new TermDerived1(f1); RESULT.setLine(f1left); :} | term:t1 mulop:m2 factor:f3 {: RESULT=new TermDerived2(t1, m2, f3); RESULT.setLine(t1left); :};
+factor::= designator:d1 {: RESULT=new FactorDerived1(d1); RESULT.setLine(d1left); :} | constant:c1 {: RESULT=new FactorDerived2(c1); RESULT.setLine(c1left); :} | LPAREN expr:e1 RPAREN {: RESULT=new FactorDerived3(e1); RESULT.setLine(e1left); :} | NEW type:t1 {: RESULT=new FactorDerived4(t1); RESULT.setLine(t1left); :} | NEW type:t1 LSQUARE expr:e2 RSQUARE {: RESULT=new FactorDerived5(t1, e2); RESULT.setLine(t1left); :};
+designator::=IDENTIFIER:I1 {: RESULT=new DesignatorDerived1(I1); RESULT.setLine(I1left); :} | designator:d1 DOT IDENTIFIER:I2 {: RESULT=new DesignatorDerived2(d1, I2); RESULT.setLine(d1left); :} | designator:d1 LSQUARE expr:e2 RSQUARE {: RESULT=new DesignatorDerived3(d1, e2); RESULT.setLine(d1left); :};
+addop::=PLUS {: RESULT=new AddopDerived1(); :} | MINUS {: RESULT=new AddopDerived2(); :};
+mulop::=ASTERISK {: RESULT=new MulopDerived1(); :} | SLASH {: RESULT=new MulopDerived2(); :} | PERCENT {: RESULT=new MulopDerived3(); :};

@@ -1,4 +1,5 @@
 package rs.ac.bg.etf.pp1;
+import rs.ac.bg.etf.pp1.ast.*;
 
 terminal PROGRAM, BREAK, CLASS, ELSE, IF, NEW, PRINT, READ, RETURN, VOID, DO, WHILE, EXTENDS, CONTINUE, CONST;
 terminal PLUS,MINUS,ASTERISK,SLASH,PERCENT,EQUALEQUAL,NOTEQUAL,GREATER,GREATEREQUAL,LESS,LESSEQUAL,AND,OR,EQUAL,PLUSPLUS,MINUSMINUS,SEMICOLON,COMMA,DOT,LPAREN,RPAREN,LSQUARE,RSQUARE,LBRACE,RBRACE;
@@ -8,20 +9,20 @@ terminal Boolean BOOLCONST;
 terminal String IDENTIFIER;
 
 non terminal program;
-non terminal programDeclList,methodDecl;
+non terminal programDeclList, methodDecl;
 non terminal programDecl;
-non terminal constDecl,varDecl,classDecl;
-non terminal type,constant;
+non terminal constDecl, varDecl, classDecl;
+non terminal type, constant;
 non terminal varList;
 non terminal var;
-non terminal classExtension,localVarDecl,classMethodDecl;
-non terminal returnType,formPars,statement;
+non terminal classExtension, localVarDecl, classMethodDecl;
+non terminal returnType, formPars, statement;
 non terminal formParsList;
 non terminal designatorStatement;
-non terminal designator,expr,actPars,condition;
-non terminal condTerm,condFact,relop;
-non terminal term,factor;
-non terminal addop,mulop;
+non terminal designator, expr, actPars, condition;
+non terminal condTerm, condFact, relop;
+non terminal term, factor;
+non terminal addop, mulop;
 non terminal statementList;
 
 program::=PROGRAM IDENTIFIER programDeclList LBRACE methodDecl RBRACE;
