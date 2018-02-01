@@ -30,7 +30,7 @@ class Sfera extends Predmet
 			return z *(r/delilac);
 		}
 	}
-}
+} // no semicolon!!!
 
 class Kvadar extends Predmet
 {

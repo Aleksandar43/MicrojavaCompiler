@@ -5,7 +5,7 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public abstract class CondTerm implements SyntaxNode {
+public abstract class IfChainWithUnmatched implements SyntaxNode {
 
     private SyntaxNode parent;
 

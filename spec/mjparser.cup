@@ -68,6 +68,7 @@ non terminal term, factor;
 non terminal addop, mulop;
 non terminal statementList;
 non terminal constAssignmentList, constAssignment;
+non terminal ifChainWithUnmatched, otherStatements;
 
 program::=PROGRAM IDENTIFIER programDeclList LBRACE methodDecl RBRACE;
 programDeclList::=programDecl programDeclList | /*eps*/;
@@ -81,7 +82,7 @@ varDecl::=type varList SEMICOLON;
 varList::=var COMMA varList | var;
 var::=IDENTIFIER | IDENTIFIER LSQUARE RSQUARE;
 	//extends clause? ClassVarDecl?
-classDecl::=CLASS IDENTIFIER classExtension LBRACE localVarDecl classMethodDecl RBRACE SEMICOLON;
+classDecl::=CLASS IDENTIFIER classExtension LBRACE localVarDecl classMethodDecl RBRACE;
 classExtension::=EXTENDS type | /*eps*/;
 localVarDecl::= varDecl localVarDecl | /*eps*/;
 classMethodDecl::=LBRACE methodDecl RBRACE | /*eps*/;
@@ -90,26 +91,27 @@ returnType::=type | VOID;
 formPars::=formParsList | /*eps*/;
 formParsList::=type var COMMA formParsList | type var;
 statementList::=statement statementList | /*eps*/;
-statement::=designatorStatement SEMICOLON;
+statement::=ifChainWithUnmatched | otherStatements;
+ifChainWithUnmatched::=IF LPAREN condition RPAREN statement | IF LPAREN condition RPAREN otherStatements ELSE ifChainWithUnmatched;
+otherStatements::=designatorStatement SEMICOLON
+			| BREAK SEMICOLON
+			| CONTINUE SEMICOLON
+			| READ LPAREN designator RPAREN SEMICOLON
+			| PRINT LPAREN expr COMMA NUMCONST RPAREN SEMICOLON
+			| PRINT LPAREN expr RPAREN SEMICOLON
+			| RETURN SEMICOLON
+			| RETURN expr SEMICOLON
+			| IF LPAREN condition RPAREN otherStatements ELSE otherStatements
+			| DO statement WHILE LPAREN condition RPAREN SEMICOLON
+			| LBRACE statementList RBRACE;
 designatorStatement::=designator EQUAL expr
 					| designator PLUSPLUS
 					| designator MINUSMINUS
-					| designator LPAREN actPars RPAREN
-					| BREAK
-					| CONTINUE
-					| READ LPAREN designator RPAREN
-					| PRINT LPAREN expr COMMA NUMCONST RPAREN
-					| PRINT LPAREN expr RPAREN //default width is 0 - prints without leading spaces
-					| RETURN
-					| RETURN expr
-					| IF LPAREN condition RPAREN statement
-					| IF LPAREN condition RPAREN statement ELSE statement
-					| DO statement WHILE LPAREN condition RPAREN
-					| LBRACE statement RBRACE;
+					| designator LPAREN actPars RPAREN;
 actPars::=expr COMMA actPars | expr | /*eps*/;
 condition::=condTerm | condTerm OR condTerm;
 condTerm::=condFact | condFact AND condFact;
-condFact::=expr relop expr;
+condFact::=expr relop expr | expr;
 relop::=EQUALEQUAL | NOTEQUAL | GREATER | GREATEREQUAL | LESS | LESSEQUAL;
 expr::=term | MINUS term | expr addop term;
 term::=factor | term mulop factor;

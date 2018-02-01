@@ -1,11 +1,11 @@
 // generated with ast extension for cup
 // version 0.8
-// 1/1/2018 4:18:14
+// 1/1/2018 4:18:11
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public abstract class CondTerm implements SyntaxNode {
+public abstract class OtherStatements implements SyntaxNode {
 
     private SyntaxNode parent;
 

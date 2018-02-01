@@ -1,15 +1,15 @@
 // generated with ast extension for cup
 // version 0.8
-// 31/0/2018 23:14:14
+// 1/1/2018 4:18:7
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class DesignatorStatementDerived7 extends DesignatorStatement {
+public class OtherStatementsDerived4 extends OtherStatements {
 
     private Designator designator;
 
-    public DesignatorStatementDerived7 (Designator designator) {
+    public OtherStatementsDerived4 (Designator designator) {
         this.designator=designator;
         if(designator!=null) designator.setParent(this);
     }
@@ -43,7 +43,7 @@ public class DesignatorStatementDerived7 extends DesignatorStatement {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("DesignatorStatementDerived7(\n");
+        buffer.append("OtherStatementsDerived4(\n");
 
         if(designator!=null)
             buffer.append(designator.toString("  "+tab));
@@ -52,7 +52,7 @@ public class DesignatorStatementDerived7 extends DesignatorStatement {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [DesignatorStatementDerived7]");
+        buffer.append(") [OtherStatementsDerived4]");
         return buffer.toString();
     }
 }

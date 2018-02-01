@@ -1,25 +1,25 @@
 // generated with ast extension for cup
 // version 0.8
-// 31/0/2018 23:14:14
+// 1/1/2018 4:18:6
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class StatementDerived1 extends Statement {
 
-    private DesignatorStatement designatorStatement;
+    private IfChainWithUnmatched ifChainWithUnmatched;
 
-    public StatementDerived1 (DesignatorStatement designatorStatement) {
-        this.designatorStatement=designatorStatement;
-        if(designatorStatement!=null) designatorStatement.setParent(this);
+    public StatementDerived1 (IfChainWithUnmatched ifChainWithUnmatched) {
+        this.ifChainWithUnmatched=ifChainWithUnmatched;
+        if(ifChainWithUnmatched!=null) ifChainWithUnmatched.setParent(this);
     }
 
-    public DesignatorStatement getDesignatorStatement() {
-        return designatorStatement;
+    public IfChainWithUnmatched getIfChainWithUnmatched() {
+        return ifChainWithUnmatched;
     }
 
-    public void setDesignatorStatement(DesignatorStatement designatorStatement) {
-        this.designatorStatement=designatorStatement;
+    public void setIfChainWithUnmatched(IfChainWithUnmatched ifChainWithUnmatched) {
+        this.ifChainWithUnmatched=ifChainWithUnmatched;
     }
 
     public void accept(Visitor visitor) {
@@ -27,16 +27,16 @@ public class StatementDerived1 extends Statement {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(designatorStatement!=null) designatorStatement.accept(visitor);
+        if(ifChainWithUnmatched!=null) ifChainWithUnmatched.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(designatorStatement!=null) designatorStatement.traverseTopDown(visitor);
+        if(ifChainWithUnmatched!=null) ifChainWithUnmatched.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(designatorStatement!=null) designatorStatement.traverseBottomUp(visitor);
+        if(ifChainWithUnmatched!=null) ifChainWithUnmatched.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -45,8 +45,8 @@ public class StatementDerived1 extends Statement {
         buffer.append(tab);
         buffer.append("StatementDerived1(\n");
 
-        if(designatorStatement!=null)
-            buffer.append(designatorStatement.toString("  "+tab));
+        if(ifChainWithUnmatched!=null)
+            buffer.append(ifChainWithUnmatched.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

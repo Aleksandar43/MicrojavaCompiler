@@ -1,19 +1,17 @@
 // generated with ast extension for cup
 // version 0.8
-// 31/0/2018 23:14:15
+// 1/1/2018 4:18:9
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class DesignatorStatementDerived8 extends DesignatorStatement {
+public class CondFactDerived2 extends CondFact {
 
     private Expr expr;
-    private Integer N2;
 
-    public DesignatorStatementDerived8 (Expr expr, Integer N2) {
+    public CondFactDerived2 (Expr expr) {
         this.expr=expr;
         if(expr!=null) expr.setParent(this);
-        this.N2=N2;
     }
 
     public Expr getExpr() {
@@ -22,14 +20,6 @@ public class DesignatorStatementDerived8 extends DesignatorStatement {
 
     public void setExpr(Expr expr) {
         this.expr=expr;
-    }
-
-    public Integer getN2() {
-        return N2;
-    }
-
-    public void setN2(Integer N2) {
-        this.N2=N2;
     }
 
     public void accept(Visitor visitor) {
@@ -53,7 +43,7 @@ public class DesignatorStatementDerived8 extends DesignatorStatement {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("DesignatorStatementDerived8(\n");
+        buffer.append("CondFactDerived2(\n");
 
         if(expr!=null)
             buffer.append(expr.toString("  "+tab));
@@ -61,11 +51,8 @@ public class DesignatorStatementDerived8 extends DesignatorStatement {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        buffer.append(" "+tab+N2);
-        buffer.append("\n");
-
         buffer.append(tab);
-        buffer.append(") [DesignatorStatementDerived8]");
+        buffer.append(") [CondFactDerived2]");
         return buffer.toString();
     }
 }

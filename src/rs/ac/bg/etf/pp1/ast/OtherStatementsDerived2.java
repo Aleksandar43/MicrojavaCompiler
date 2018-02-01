@@ -1,13 +1,13 @@
 // generated with ast extension for cup
 // version 0.8
-// 31/0/2018 23:14:14
+// 1/1/2018 4:18:7
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class DesignatorStatementDerived6 extends DesignatorStatement {
+public class OtherStatementsDerived2 extends OtherStatements {
 
-    public DesignatorStatementDerived6 () {
+    public OtherStatementsDerived2 () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class DesignatorStatementDerived6 extends DesignatorStatement {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("DesignatorStatementDerived6(\n");
+        buffer.append("OtherStatementsDerived2(\n");
 
         buffer.append(tab);
-        buffer.append(") [DesignatorStatementDerived6]");
+        buffer.append(") [OtherStatementsDerived2]");
         return buffer.toString();
     }
 }
