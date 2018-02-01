@@ -1,15 +1,39 @@
 // generated with ast extension for cup
 // version 0.8
-// 1/1/2018 4:18:13
+// 1/1/2018 22:32:38
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public abstract class ConstDecl implements SyntaxNode {
+public class ConstDecl implements SyntaxNode {
 
     private SyntaxNode parent;
-
     private int line;
+    private Type type;
+    private ConstAssignmentList constAssignmentList;
+
+    public ConstDecl (Type type, ConstAssignmentList constAssignmentList) {
+        this.type=type;
+        if(type!=null) type.setParent(this);
+        this.constAssignmentList=constAssignmentList;
+        if(constAssignmentList!=null) constAssignmentList.setParent(this);
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type=type;
+    }
+
+    public ConstAssignmentList getConstAssignmentList() {
+        return constAssignmentList;
+    }
+
+    public void setConstAssignmentList(ConstAssignmentList constAssignmentList) {
+        this.constAssignmentList=constAssignmentList;
+    }
 
     public SyntaxNode getParent() {
         return parent;
@@ -27,11 +51,46 @@ public abstract class ConstDecl implements SyntaxNode {
         this.line=line;
     }
 
-    public abstract void accept(Visitor visitor);
-    public abstract void childrenAccept(Visitor visitor);
-    public abstract void traverseTopDown(Visitor visitor);
-    public abstract void traverseBottomUp(Visitor visitor);
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
 
-    public String toString() { return toString(""); }
-    public abstract String toString(String tab);
+    public void childrenAccept(Visitor visitor) {
+        if(type!=null) type.accept(visitor);
+        if(constAssignmentList!=null) constAssignmentList.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(type!=null) type.traverseTopDown(visitor);
+        if(constAssignmentList!=null) constAssignmentList.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(type!=null) type.traverseBottomUp(visitor);
+        if(constAssignmentList!=null) constAssignmentList.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("ConstDecl(\n");
+
+        if(type!=null)
+            buffer.append(type.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(constAssignmentList!=null)
+            buffer.append(constAssignmentList.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [ConstDecl]");
+        return buffer.toString();
+    }
 }

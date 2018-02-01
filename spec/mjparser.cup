@@ -5,33 +5,28 @@ import java_cup.runtime.*;
 parser code {:
 	
 	boolean errorDetected = false;
-    // slede redefinisani metodi za prijavu gresaka radi izmene teksta poruke
-     
+
     public void report_fatal_error(String message, Object info) throws java.lang.Exception {
       done_parsing();
       report_error(message, info);
     }
-  
+
     public void syntax_error(Symbol cur_token) {
-        report_error("\nSintaksna greska", cur_token);
-    }
-  
-    public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
-        report_fatal_error("Fatalna greska, parsiranje se ne moze nastaviti", cur_token);
+        report_error("\nSyntax error", cur_token);
     }
 
     public void report_error(String message, Object info) {
     	errorDetected = true;
     	StringBuilder msg = new StringBuilder(message); 
     	if (info instanceof Symbol)
-            msg.append (" na liniji ").append(((Symbol)info).left).append(": ").append(((Symbol) info).value);
+            msg.append (" at line ").append(((Symbol)info).left).append(": ").append(((Symbol) info).value);
         System.out.println(msg.toString());
     }
     
     public void report_info(String message, Object info) {
     	StringBuilder msg = new StringBuilder(message); 
     	if (info instanceof Symbol)
-            msg.append (" na liniji ").append(((Symbol)info).left).append(": ").append(((Symbol) info).value);
+            msg.append (" at line ").append(((Symbol)info).left).append(": ").append(((Symbol) info).value);
         System.out.println(msg.toString());
     }
     
@@ -63,6 +58,7 @@ non terminal returnType, formPars, statement;
 non terminal formParsList;
 non terminal designatorStatement;
 non terminal designator, expr, actPars, condition;
+non terminal actParsList;
 non terminal condTerm, condFact, relop;
 non terminal term, factor;
 non terminal addop, mulop;
@@ -70,52 +66,54 @@ non terminal statementList;
 non terminal constAssignmentList, constAssignment;
 non terminal ifChainWithUnmatched, otherStatements;
 
-program::=PROGRAM IDENTIFIER programDeclList LBRACE methodDecl RBRACE;
-programDeclList::=programDecl programDeclList | /*eps*/;
-programDecl::=constDecl | varDecl | classDecl;
-constDecl::=CONST type constAssignmentList SEMICOLON;
-constAssignmentList::=constAssignment COMMA constAssignmentList | constAssignment;
-constAssignment::=IDENTIFIER EQUAL constant;
-type::=IDENTIFIER;
-constant::=NUMCONST | CHARCONST | BOOLCONST;
-varDecl::=type varList SEMICOLON;
-varList::=var COMMA varList | var;
-var::=IDENTIFIER | IDENTIFIER LSQUARE RSQUARE;
+program::=(Program) PROGRAM IDENTIFIER programDeclList LBRACE methodDecl RBRACE;
+programDeclList::=(ProgramDeclarations) programDecl programDeclList | (NoProgramDeclarations) /*eps*/;
+programDecl::=(ProgramDeclConstant) constDecl | (ProgramDeclVar) varDecl | (ProgramDeclClass) classDecl;
+constDecl::=(ConstDecl) CONST type constAssignmentList SEMICOLON;
+constAssignmentList::=(MultipleConstAssignments) constAssignment COMMA constAssignmentList | (OneConstAssignment) constAssignment;
+constAssignment::=(ConstAssignment) IDENTIFIER EQUAL constant;
+type::=(Type) IDENTIFIER;
+constant::=(NumberConstant) NUMCONST | (CharacterConstant) CHARCONST | (BooleanConstant) BOOLCONST;
+varDecl::=(VarDecl) type varList SEMICOLON;
+varList::=(MultipleVarDecls) var COMMA varList | (OneVarDecl) var;
+var::=(ScalarVar) IDENTIFIER | (ArrayVar) IDENTIFIER LSQUARE RSQUARE;
 	//extends clause? ClassVarDecl?
-classDecl::=CLASS IDENTIFIER classExtension LBRACE localVarDecl classMethodDecl RBRACE;
-classExtension::=EXTENDS type | /*eps*/;
-localVarDecl::= varDecl localVarDecl | /*eps*/;
-classMethodDecl::=LBRACE methodDecl RBRACE | /*eps*/;
-methodDecl::=returnType IDENTIFIER LPAREN formPars RPAREN localVarDecl LBRACE statementList RBRACE methodDecl | /*eps*/;
-returnType::=type | VOID;
-formPars::=formParsList | /*eps*/;
-formParsList::=type var COMMA formParsList | type var;
-statementList::=statement statementList | /*eps*/;
-statement::=ifChainWithUnmatched | otherStatements;
-ifChainWithUnmatched::=IF LPAREN condition RPAREN statement | IF LPAREN condition RPAREN otherStatements ELSE ifChainWithUnmatched;
-otherStatements::=designatorStatement SEMICOLON
-			| BREAK SEMICOLON
-			| CONTINUE SEMICOLON
-			| READ LPAREN designator RPAREN SEMICOLON
-			| PRINT LPAREN expr COMMA NUMCONST RPAREN SEMICOLON
-			| PRINT LPAREN expr RPAREN SEMICOLON
-			| RETURN SEMICOLON
-			| RETURN expr SEMICOLON
-			| IF LPAREN condition RPAREN otherStatements ELSE otherStatements
-			| DO statement WHILE LPAREN condition RPAREN SEMICOLON
-			| LBRACE statementList RBRACE;
-designatorStatement::=designator EQUAL expr
-					| designator PLUSPLUS
-					| designator MINUSMINUS
-					| designator LPAREN actPars RPAREN;
-actPars::=expr COMMA actPars | expr | /*eps*/;
-condition::=condTerm | condTerm OR condTerm;
-condTerm::=condFact | condFact AND condFact;
-condFact::=expr relop expr | expr;
-relop::=EQUALEQUAL | NOTEQUAL | GREATER | GREATEREQUAL | LESS | LESSEQUAL;
-expr::=term | MINUS term | expr addop term;
-term::=factor | term mulop factor;
-factor::= designator | constant | LPAREN expr RPAREN | designator LPAREN actPars RPAREN | NEW type | NEW type LSQUARE expr RSQUARE;
-designator::=IDENTIFIER | designator DOT IDENTIFIER | designator LSQUARE expr RSQUARE;
-addop::=PLUS | MINUS;
-mulop::=ASTERISK | SLASH | PERCENT;
+classDecl::=(ClassDecl) CLASS IDENTIFIER classExtension LBRACE localVarDecl classMethodDecl RBRACE;
+classExtension::=(Extension) EXTENDS type | (NoExtension) /*eps*/;
+localVarDecl::=(LocalVarDeclarations) varDecl localVarDecl | (NoLocalVarDeclarations) /*eps*/;
+classMethodDecl::=(ClassMethods) LBRACE methodDecl RBRACE | (NoClassMethods) /*eps*/;
+methodDecl::=(MethodDeclarations) returnType IDENTIFIER LPAREN formPars RPAREN localVarDecl LBRACE statementList RBRACE methodDecl | (NoMethodDeclarations) /*eps*/;
+returnType::=(ReturnTypeNonVoid) type | (ReturnTypeVoid) VOID;
+formPars::=(FormalParameters) formParsList | (NoFormalParameters) /*eps*/;
+formParsList::=(MultipleFormalParameters) type var COMMA formParsList | (OneFormalParameter) type var;
+statementList::=(Statements) statement statementList | (NoStatements) /*eps*/;
+statement::=(IfsUnmatched) ifChainWithUnmatched | (NotIfsUnmatched) otherStatements;
+ifChainWithUnmatched::=(IfWithoutElse) IF LPAREN condition RPAREN statement | (IfWithUnmatchedInElse) IF LPAREN condition RPAREN otherStatements ELSE ifChainWithUnmatched;
+otherStatements::=(StatementWithDesignator) designatorStatement SEMICOLON
+			| (Break) BREAK SEMICOLON
+			| (Continue) CONTINUE SEMICOLON
+			| (Read) READ LPAREN designator RPAREN SEMICOLON
+			| (PrintWithWidth) PRINT LPAREN expr COMMA NUMCONST RPAREN SEMICOLON
+			| (PrintSimple) PRINT LPAREN expr RPAREN SEMICOLON
+			| (ReturnVoid) RETURN SEMICOLON
+			| (ReturnNonVoid) RETURN expr SEMICOLON
+			| (IfWithMatchedInElse) IF LPAREN condition RPAREN otherStatements ELSE otherStatements
+			| (DoWhileLoop) DO statement WHILE LPAREN condition RPAREN SEMICOLON
+			| (StatementBlock) LBRACE statementList RBRACE;
+designatorStatement::=(Assignment) designator EQUAL expr
+					| (Increment) designator PLUSPLUS
+					| (Decrement) designator MINUSMINUS
+					| (FunctionCall) designator LPAREN actPars RPAREN;
+actPars::=(ActualParameters) actParsList | (NoActualParameters) /*eps*/;
+actParsList::=(MultipleActualParameters) expr COMMA actParsList | (OneActualParameter) expr;
+condition::=(ConditionTerm) condTerm | (LogicalOr) condTerm OR condTerm;
+condTerm::=(ConditionFact) condFact | (LogicalAnd) condFact AND condFact;
+condFact::=(ConditionRelation) expr relop expr | (ConditionExpression) expr;
+relop::=(EqualOp) EQUALEQUAL | (NotEqualOp) NOTEQUAL | (GreaterOp) GREATER | (GreaterOrEqualOp) GREATEREQUAL | (LessOp) LESS | (LessOrEqualOp) LESSEQUAL;
+expr::=(ExpressionTerm) term | (ExpressionNegation) MINUS term | (ExpressionAddOp) expr addop term; //Negation here!?
+term::=(TermFactor) factor | (TermMulOp) term mulop factor;
+factor::=(FactorDesignator) designator | (FactorConstant) constant | (FactorExpressionInParentheses) LPAREN expr RPAREN | (FactorFunctionCall) designator LPAREN actPars RPAREN | (FactorNewClassInstance) NEW type | (FactorNewArrayAllocation) NEW type LSQUARE expr RSQUARE;
+	//complexDesignator
+designator::=(SimpleDesignator) IDENTIFIER | (ClassField) designator DOT IDENTIFIER | (ArrayElementDesignator) designator LSQUARE expr RSQUARE;
+addop::=(AdditionOp) PLUS | (SubtractionOp) MINUS;
+mulop::=(MultiplicationOp) ASTERISK | (DivisionOp) SLASH | (ModuleOp) PERCENT;
