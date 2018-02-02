@@ -4,19 +4,33 @@ package rs.ac.bg.etf.pp1;
 import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.symboltable.concepts.*;
 import rs.etf.pp1.symboltable.Tab;
+import rs.etf.pp1.symboltable.visitors.DumpSymbolTableVisitor;
 
 public class SemanticAnalyzer extends VisitorAdaptor{
     //struct==type
-    Obj programObj;
-    Struct currentType;
-    String semanticErrors="";
+    private Obj programObj;
+    private Struct currentType;
+    private String semanticErrors="",semanticUsageDetections="";
+    private DumpSymbolTableVisitor localVisitor;
     
     public void reportError(int line, String message){
         semanticErrors+=("Error at line "+line+": "+message+"\n");
     }
 
+    public void reportUsage(int line, Obj obj){
+        semanticUsageDetections+=(obj.getName()+" used at line "+line);
+        localVisitor=new DumpSymbolTableVisitor();
+        obj.accept(localVisitor);
+        
+        semanticUsageDetections+=(" ("+localVisitor.getOutput()+")\n");
+    }
+
     public String getSemanticErrors() {
         return semanticErrors;
+    }
+
+    public String getSemanticUsageDetections() {
+        return semanticUsageDetections;
     }
     
     @Override
@@ -51,5 +65,13 @@ public class SemanticAnalyzer extends VisitorAdaptor{
             reportError(ConstAssignment.getLine(), "'"+constName+"' is already defined in the current scope");
         }
         currentType=Tab.noType;
+    }
+
+    @Override
+    public void visit(SimpleDesignator SimpleDesignator) {
+        String designatorName = SimpleDesignator.getI1();
+        Obj designatorObj = Tab.find(designatorName);
+        if(!designatorObj.equals(Tab.noObj))
+            reportUsage(SimpleDesignator.getLine(), designatorObj);
     }
 }

@@ -24,7 +24,8 @@ public class Compiler {
             System.out.println("---- Semantic analysis ----");
             SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
             rootValue.traverseBottomUp(semanticAnalyzer);
-            System.err.println(semanticAnalyzer.semanticErrors);
+            System.out.println(semanticAnalyzer.getSemanticUsageDetections());
+            System.err.println(semanticAnalyzer.getSemanticErrors());
             tsdump();
         } catch (Exception ex) {
             ex.printStackTrace();
