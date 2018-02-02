@@ -13,7 +13,7 @@ program test301
 {
 	void main()	int bodovi;
 	{
-	
+			print(qwerty);
 		bodovi = 0;
 		bodovi++;
 		bodovi = bodovi + jedan;

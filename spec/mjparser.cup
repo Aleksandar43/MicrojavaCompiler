@@ -57,7 +57,6 @@ non terminal programDecl;
 non terminal constDecl, varDecl, classDecl;
 non terminal type, constant;
 non terminal varList;
-non terminal var;
 non terminal classExtension, localVarDecl, classMethodDecl;
 non terminal returnType, formPars, statement;
 non terminal formParsList;
@@ -71,7 +70,7 @@ non terminal statementList;
 non terminal constAssignmentList, constAssignment;
 non terminal ifChainWithUnmatched, otherStatements;
 
-non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName;
+non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName,var;
 
 program::=(Program) PROGRAM programName programDeclList LBRACE methodDecl RBRACE;
 programName::=(ProgramName) IDENTIFIER:name;
@@ -87,7 +86,7 @@ varDecl::=(VarDeclNoError) type varList SEMICOLON
 		| (ErrorVarDecl) error SEMICOLON:e {: parser.syntaxErrorMessages+="Syntax recovery at line "+eleft; :};
 varList::=(MultipleVarDecls) var COMMA varList | (OneVarDecl) var;
 //error productions - varDecl & varList?
-var::=(ScalarVar) IDENTIFIER | (ArrayVar) IDENTIFIER LSQUARE RSQUARE
+var::=(ScalarVar) IDENTIFIER:name | (ArrayVar) IDENTIFIER:name LSQUARE RSQUARE
 		| (ErrorVar) error:e {: parser.syntaxErrorMessages+="Syntax recovery at line "+eleft; :};
 	//extends clause? ClassVarDecl?
 classDecl::=(ClassDecl) CLASS IDENTIFIER classExtension LBRACE localVarDecl classMethodDecl RBRACE;

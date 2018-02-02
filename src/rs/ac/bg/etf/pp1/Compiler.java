@@ -34,7 +34,10 @@ public class Compiler {
             SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
             rootValue.traverseBottomUp(semanticAnalyzer);
             System.out.println(semanticAnalyzer.getSemanticUsageDetections());
-            System.err.println(semanticAnalyzer.getSemanticErrors());
+            if(!semanticAnalyzer.getSemanticErrors().equals("")){
+                System.err.println(semanticAnalyzer.getSemanticErrors());
+                printWriter.write("---- Semantic errors ----\n"+semanticAnalyzer.getSemanticErrors());
+            }
             tsdump();
             printWriter.close();
             logFile.close();

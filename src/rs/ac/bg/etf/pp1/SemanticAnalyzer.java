@@ -73,5 +73,32 @@ public class SemanticAnalyzer extends VisitorAdaptor{
         Obj designatorObj = Tab.find(designatorName);
         if(!designatorObj.equals(Tab.noObj))
             reportUsage(SimpleDesignator.getLine(), designatorObj);
+        else{
+            reportError(SimpleDesignator.getLine(), "undeclared variable "+designatorName);
+        }
+    }
+
+    @Override
+    public void visit(ScalarVar ScalarVar) {
+        String varName = ScalarVar.getName();
+        Obj varObj = Tab.find(varName);
+        if(varObj.equals(Tab.noObj)){
+            Tab.insert(Obj.Var, varName, currentType);
+        } else{
+            reportError(ScalarVar.getLine(), "'"+varName+"' is already defined in the current scope");
+        }
+        currentType=Tab.noType;
+    }
+    
+    @Override
+    public void visit(ArrayVar ArrayVar) {
+        String varName = ArrayVar.getName();
+        Obj varObj = Tab.find(varName);
+        if(varObj.equals(Tab.noObj)){
+            Tab.insert(Obj.Var, varName, new Struct(Struct.Array, currentType));
+        } else{
+            reportError(ArrayVar.getLine(), "'"+varName+"' is already defined in the current scope");
+        }
+        currentType=Tab.noType;
     }
 }

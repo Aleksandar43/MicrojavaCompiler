@@ -61,7 +61,6 @@ nonterminal ClassDecl classDecl;
 non terminal Type type;
 nonterminal Constant constant;
 non terminal VarList varList;
-non terminal Var var;
 non terminal ClassExtension classExtension;
 nonterminal LocalVarDecl localVarDecl;
 nonterminal ClassMethodDecl classMethodDecl;
@@ -88,7 +87,7 @@ nonterminal ConstAssignment constAssignment;
 non terminal IfChainWithUnmatched ifChainWithUnmatched;
 nonterminal OtherStatements otherStatements;
 
-non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName;
+non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName,var;
 
 program::=(Program) PROGRAM programName:p1 programDeclList:p2 LBRACE methodDecl:m3 RBRACE {: RESULT=new Program(p1, p2, m3); RESULT.setLine(p1left); :};
 programName::=(ProgramName) IDENTIFIER:name {: RESULT=new ProgramName(name); RESULT.setLine(nameleft); :};
@@ -101,11 +100,11 @@ constName::=(ConstName) IDENTIFIER:name {: RESULT=new ConstName(name); RESULT.se
 type::=(Type) IDENTIFIER:name {: RESULT=new Type(name); RESULT.setLine(nameleft); :};
 constant::=(NumberConstant) NUMCONST:N1 {: RESULT=new NumberConstant(N1); RESULT.setLine(N1left); :} | (CharacterConstant) CHARCONST:C1 {: RESULT=new CharacterConstant(C1); RESULT.setLine(C1left); :} | (BooleanConstant) BOOLCONST:B1 {: RESULT=new BooleanConstant(B1); RESULT.setLine(B1left); :};
 varDecl::=(VarDeclNoError) type:t1 varList:v2 SEMICOLON {: RESULT=new VarDeclNoError(t1, v2); RESULT.setLine(t1left); :}
-		| (ErrorVarDecl) error SEMICOLON:e {: syntaxErrorMessages+="Syntax recovery at line "+eleft; :} {: RESULT=new ErrorVarDecl(); :};
+		| (ErrorVarDecl) error SEMICOLON:e {: parser.syntaxErrorMessages+="Syntax recovery at line "+eleft; :} {: RESULT=new ErrorVarDecl(); :};
 varList::=(MultipleVarDecls) var:v1 COMMA varList:v2 {: RESULT=new MultipleVarDecls(v1, v2); RESULT.setLine(v1left); :} | (OneVarDecl) var:v1 {: RESULT=new OneVarDecl(v1); RESULT.setLine(v1left); :};
 //error productions - varDecl & varList?
-var::=(ScalarVar) IDENTIFIER:I1 {: RESULT=new ScalarVar(I1); RESULT.setLine(I1left); :} | (ArrayVar) IDENTIFIER:I1 LSQUARE RSQUARE {: RESULT=new ArrayVar(I1); RESULT.setLine(I1left); :}
-		| (ErrorVar) error:e {: syntaxErrorMessages+="Syntax recovery at line "+eleft; :} {: RESULT=new ErrorVar(); :};
+var::=(ScalarVar) IDENTIFIER:name {: RESULT=new ScalarVar(name); RESULT.setLine(nameleft); :} | (ArrayVar) IDENTIFIER:name LSQUARE RSQUARE {: RESULT=new ArrayVar(name); RESULT.setLine(nameleft); :}
+		| (ErrorVar) error:e {: parser.syntaxErrorMessages+="Syntax recovery at line "+eleft; :} {: RESULT=new ErrorVar(); :};
 	//extends clause? ClassVarDecl?
 classDecl::=(ClassDecl) CLASS IDENTIFIER:I1 classExtension:c2 LBRACE localVarDecl:l3 classMethodDecl:c4 RBRACE {: RESULT=new ClassDecl(I1, c2, l3, c4); RESULT.setLine(I1left); :};
 classExtension::=(Extension) EXTENDS type:t1 {: RESULT=new Extension(t1); RESULT.setLine(t1left); :} | (NoExtension) {: RESULT=new NoExtension(); :} /*eps*/;
@@ -117,7 +116,7 @@ formPars::=(FormalParameters) formParsList:f1 {: RESULT=new FormalParameters(f1)
 formParsList::=(MultipleFormalParameters) type:t1 var:v2 COMMA formParsList:f3 {: RESULT=new MultipleFormalParameters(t1, v2, f3); RESULT.setLine(t1left); :} | (OneFormalParameter) type:t1 var:v2 {: RESULT=new OneFormalParameter(t1, v2); RESULT.setLine(t1left); :};
 statementList::=(Statements) statement:s1 statementList:s2 {: RESULT=new Statements(s1, s2); RESULT.setLine(s1left); :} | (NoStatements) {: RESULT=new NoStatements(); :} /*eps*/;
 statement::=(IfsUnmatched) ifChainWithUnmatched:i1 {: RESULT=new IfsUnmatched(i1); RESULT.setLine(i1left); :} | (NotIfsUnmatched) otherStatements:o1 {: RESULT=new NotIfsUnmatched(o1); RESULT.setLine(o1left); :}
-			| (ErrorStatement) error SEMICOLON:e {:System.out.println("Syntax recovery at line "+eleft); :} {: RESULT=new ErrorStatement(); :};
+			| (ErrorStatement) error SEMICOLON:e {: parser.syntaxErrorMessages+="Syntax recovery at line "+eleft; :} {: RESULT=new ErrorStatement(); :};
 ifChainWithUnmatched::=(IfWithoutElse) IF LPAREN condition:c1 RPAREN statement:s2 {: RESULT=new IfWithoutElse(c1, s2); RESULT.setLine(c1left); :} | (IfWithUnmatchedInElse) IF LPAREN condition:c1 RPAREN otherStatements:o2 ELSE ifChainWithUnmatched:i3 {: RESULT=new IfWithUnmatchedInElse(c1, o2, i3); RESULT.setLine(c1left); :};
 otherStatements::=(StatementWithDesignator) designatorStatement:d1 SEMICOLON {: RESULT=new StatementWithDesignator(d1); RESULT.setLine(d1left); :}
 			| (Break) BREAK SEMICOLON {: RESULT=new Break(); :}
