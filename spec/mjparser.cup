@@ -4,7 +4,9 @@ import java_cup.runtime.*;
 
 parser code {:
 	
-	boolean errorDetected = false;
+	int syntaxErrors=0;
+	
+	public int getSyntaxErrors(){return syntaxErrors;}
 
     public void report_fatal_error(String message, Object info) throws java.lang.Exception {
       done_parsing();
@@ -16,7 +18,7 @@ parser code {:
     }
 
     public void report_error(String message, Object info) {
-    	errorDetected = true;
+    	syntaxErrors++;
     	StringBuilder msg = new StringBuilder(message); 
     	if (info instanceof Symbol)
             msg.append (" at line ").append(((Symbol)info).left).append(": ").append(((Symbol) info).value);
@@ -32,12 +34,12 @@ parser code {:
     
 :}
 
-scan with {:
+/*scan with {:
 	Symbol s = this.getScanner().next_token();
 	if (s != null && s.value != null) 
 		System.out.println(s.toString() + " " + s.value.toString());
 	return s;
-:}
+:}*/
 
 terminal PROGRAM, BREAK, CLASS, ELSE, IF, NEW, PRINT, READ, RETURN, VOID, DO, WHILE, EXTENDS, CONTINUE, CONST;
 terminal PLUS,MINUS,ASTERISK,SLASH,PERCENT,EQUALEQUAL,NOTEQUAL,GREATER,GREATEREQUAL,LESS,LESSEQUAL,AND,OR,EQUAL,PLUSPLUS,MINUSMINUS,SEMICOLON,COMMA,DOT,LPAREN,RPAREN,LSQUARE,RSQUARE,LBRACE,RBRACE;
@@ -74,9 +76,11 @@ constAssignmentList::=(MultipleConstAssignments) constAssignment COMMA constAssi
 constAssignment::=(ConstAssignment) IDENTIFIER EQUAL constant;
 type::=(Type) IDENTIFIER;
 constant::=(NumberConstant) NUMCONST | (CharacterConstant) CHARCONST | (BooleanConstant) BOOLCONST;
-varDecl::=(VarDecl) type varList SEMICOLON;
+varDecl::=(VarDeclNoError) type varList SEMICOLON
+		| (ErrorVarDecl) error SEMICOLON:e {:System.out.println("Syntax recovery at line "+eleft); :};
 varList::=(MultipleVarDecls) var COMMA varList | (OneVarDecl) var;
-var::=(ScalarVar) IDENTIFIER | (ArrayVar) IDENTIFIER LSQUARE RSQUARE;
+var::=(ScalarVar) IDENTIFIER | (ArrayVar) IDENTIFIER LSQUARE RSQUARE
+		| (ErrorVar) error:e {:System.out.println("Syntax recovery at line "+eleft); :};
 	//extends clause? ClassVarDecl?
 classDecl::=(ClassDecl) CLASS IDENTIFIER classExtension LBRACE localVarDecl classMethodDecl RBRACE;
 classExtension::=(Extension) EXTENDS type | (NoExtension) /*eps*/;
@@ -87,7 +91,8 @@ returnType::=(ReturnTypeNonVoid) type | (ReturnTypeVoid) VOID;
 formPars::=(FormalParameters) formParsList | (NoFormalParameters) /*eps*/;
 formParsList::=(MultipleFormalParameters) type var COMMA formParsList | (OneFormalParameter) type var;
 statementList::=(Statements) statement statementList | (NoStatements) /*eps*/;
-statement::=(IfsUnmatched) ifChainWithUnmatched | (NotIfsUnmatched) otherStatements;
+statement::=(IfsUnmatched) ifChainWithUnmatched | (NotIfsUnmatched) otherStatements
+			| (ErrorStatement) error SEMICOLON:e {:System.out.println("Syntax recovery at line "+eleft); :};
 ifChainWithUnmatched::=(IfWithoutElse) IF LPAREN condition RPAREN statement | (IfWithUnmatchedInElse) IF LPAREN condition RPAREN otherStatements ELSE ifChainWithUnmatched;
 otherStatements::=(StatementWithDesignator) designatorStatement SEMICOLON
 			| (Break) BREAK SEMICOLON

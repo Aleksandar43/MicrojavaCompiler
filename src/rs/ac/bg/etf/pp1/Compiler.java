@@ -12,6 +12,9 @@ public class Compiler {
             MJParser parser=new MJParser(lexer);
             Symbol rootSymbol = parser.parse();
             Program rootValue = (Program) rootSymbol.value;
+            if(parser.getSyntaxErrors()!=0)
+                System.out.println(parser.getSyntaxErrors()+" syntax error"+(parser.getSyntaxErrors()>1?"s":"")+" detected");
+            System.out.println("---- Syntax tree ----");
             System.out.println(rootValue.toString(""));
         } catch (Exception ex) {
             ex.printStackTrace();

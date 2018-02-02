@@ -5,9 +5,9 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ReturnTypeVoid extends ReturnType {
+public class ErrorVarDecl extends VarDecl {
 
-    public ReturnTypeVoid () {
+    public ErrorVarDecl () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class ReturnTypeVoid extends ReturnType {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ReturnTypeVoid(\n");
+        buffer.append("ErrorVarDecl(\n");
 
         buffer.append(tab);
-        buffer.append(") [ReturnTypeVoid]");
+        buffer.append(") [ErrorVarDecl]");
         return buffer.toString();
     }
 }

@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 1/1/2018 22:32:40
+// 2/1/2018 3:14:39
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -36,6 +36,7 @@ public interface Visitor {
     public void visit(LocalVarDecl localVarDecl);
     public void visit(CondTerm condTerm);
     public void visit(Factor factor);
+    public void visit(VarDecl varDecl);
     public void visit(IfChainWithUnmatched ifChainWithUnmatched);
     public void visit(ModuleOp ModuleOp);
     public void visit(DivisionOp DivisionOp);
@@ -89,6 +90,7 @@ public interface Visitor {
     public void visit(StatementWithDesignator StatementWithDesignator);
     public void visit(IfWithUnmatchedInElse IfWithUnmatchedInElse);
     public void visit(IfWithoutElse IfWithoutElse);
+    public void visit(ErrorStatement ErrorStatement);
     public void visit(NotIfsUnmatched NotIfsUnmatched);
     public void visit(IfsUnmatched IfsUnmatched);
     public void visit(NoStatements NoStatements);
@@ -108,11 +110,13 @@ public interface Visitor {
     public void visit(NoExtension NoExtension);
     public void visit(Extension Extension);
     public void visit(ClassDecl ClassDecl);
+    public void visit(ErrorVar ErrorVar);
     public void visit(ArrayVar ArrayVar);
     public void visit(ScalarVar ScalarVar);
     public void visit(OneVarDecl OneVarDecl);
     public void visit(MultipleVarDecls MultipleVarDecls);
-    public void visit(VarDecl VarDecl);
+    public void visit(ErrorVarDecl ErrorVarDecl);
+    public void visit(VarDeclNoError VarDeclNoError);
     public void visit(BooleanConstant BooleanConstant);
     public void visit(CharacterConstant CharacterConstant);
     public void visit(NumberConstant NumberConstant);
