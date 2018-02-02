@@ -86,7 +86,7 @@ nonterminal ConstAssignment constAssignment;
 non terminal IfChainWithUnmatched ifChainWithUnmatched;
 nonterminal OtherStatements otherStatements;
 
-non terminal rs.etf.pp1.symboltable.concepts.Obj programName;
+non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName;
 
 program::=(Program) PROGRAM programName:p1 programDeclList:p2 LBRACE methodDecl:m3 RBRACE {: RESULT=new Program(p1, p2, m3); RESULT.setLine(p1left); :};
 programName::=(ProgramName) IDENTIFIER:name {: RESULT=new ProgramName(name); RESULT.setLine(nameleft); :};
@@ -94,7 +94,8 @@ programDeclList::=(ProgramDeclarations) programDecl:p1 programDeclList:p2 {: RES
 programDecl::=(ProgramDeclConstant) constDecl:c1 {: RESULT=new ProgramDeclConstant(c1); RESULT.setLine(c1left); :} | (ProgramDeclVar) varDecl:v1 {: RESULT=new ProgramDeclVar(v1); RESULT.setLine(v1left); :} | (ProgramDeclClass) classDecl:c1 {: RESULT=new ProgramDeclClass(c1); RESULT.setLine(c1left); :};
 constDecl::=(ConstDecl) CONST type:t1 constAssignmentList:c2 SEMICOLON {: RESULT=new ConstDecl(t1, c2); RESULT.setLine(t1left); :};
 constAssignmentList::=(MultipleConstAssignments) constAssignment:c1 COMMA constAssignmentList:c2 {: RESULT=new MultipleConstAssignments(c1, c2); RESULT.setLine(c1left); :} | (OneConstAssignment) constAssignment:c1 {: RESULT=new OneConstAssignment(c1); RESULT.setLine(c1left); :};
-constAssignment::=(ConstAssignment) IDENTIFIER:I1 EQUAL constant:c2 {: RESULT=new ConstAssignment(I1, c2); RESULT.setLine(I1left); :};
+constAssignment::=(ConstAssignment) constName:c1 EQUAL constant:c2 {: RESULT=new ConstAssignment(c1, c2); RESULT.setLine(c1left); :};
+constName::=(ConstName) IDENTIFIER:name {: RESULT=new ConstName(name); RESULT.setLine(nameleft); :};
 type::=(Type) IDENTIFIER:name {: RESULT=new Type(name); RESULT.setLine(nameleft); :};
 constant::=(NumberConstant) NUMCONST:N1 {: RESULT=new NumberConstant(N1); RESULT.setLine(N1left); :} | (CharacterConstant) CHARCONST:C1 {: RESULT=new CharacterConstant(C1); RESULT.setLine(C1left); :} | (BooleanConstant) BOOLCONST:B1 {: RESULT=new BooleanConstant(B1); RESULT.setLine(B1left); :};
 varDecl::=(VarDeclNoError) type:t1 varList:v2 SEMICOLON {: RESULT=new VarDeclNoError(t1, v2); RESULT.setLine(t1left); :}

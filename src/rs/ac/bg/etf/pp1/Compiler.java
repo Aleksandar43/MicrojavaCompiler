@@ -22,7 +22,9 @@ public class Compiler {
             System.out.println(rootValue.toString(""));
             Tab.init();
             System.out.println("---- Semantic analysis ----");
-            rootValue.traverseBottomUp(new SemanticAnalyzer());
+            SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
+            rootValue.traverseBottomUp(semanticAnalyzer);
+            System.err.println(semanticAnalyzer.semanticErrors);
             tsdump();
         } catch (Exception ex) {
             ex.printStackTrace();
