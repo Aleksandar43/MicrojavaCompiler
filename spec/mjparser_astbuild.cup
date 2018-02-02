@@ -1,13 +1,14 @@
 package rs.ac.bg.etf.pp1;
 import rs.ac.bg.etf.pp1.ast.*;
 import java_cup.runtime.*;
-import rs.etf.pp1.symboltable.concepts.*;
 
 parser code {:
 	
 	int syntaxErrors=0;
+	String syntaxErrorMessages="";
 	
 	public int getSyntaxErrors(){return syntaxErrors;}
+	public String getSyntaxErrorMessages(){return syntaxErrorMessages;}
 
     public void report_fatal_error(String message, Object info) throws java.lang.Exception {
       done_parsing();
@@ -23,14 +24,15 @@ parser code {:
     	StringBuilder msg = new StringBuilder(message); 
     	if (info instanceof Symbol)
             msg.append (" at line ").append(((Symbol)info).left).append(": ").append(((Symbol) info).value);
-        System.out.println(msg.toString());
+        /*System.out.println(msg.toString());*/
+		syntaxErrorMessages+=msg.toString()+"\n";
     }
     
     public void report_info(String message, Object info) {
     	StringBuilder msg = new StringBuilder(message); 
     	if (info instanceof Symbol)
             msg.append (" at line ").append(((Symbol)info).left).append(": ").append(((Symbol) info).value);
-        System.out.println(msg.toString());
+        /*System.out.println(msg.toString());*/
     }
     
 :}
@@ -99,11 +101,11 @@ constName::=(ConstName) IDENTIFIER:name {: RESULT=new ConstName(name); RESULT.se
 type::=(Type) IDENTIFIER:name {: RESULT=new Type(name); RESULT.setLine(nameleft); :};
 constant::=(NumberConstant) NUMCONST:N1 {: RESULT=new NumberConstant(N1); RESULT.setLine(N1left); :} | (CharacterConstant) CHARCONST:C1 {: RESULT=new CharacterConstant(C1); RESULT.setLine(C1left); :} | (BooleanConstant) BOOLCONST:B1 {: RESULT=new BooleanConstant(B1); RESULT.setLine(B1left); :};
 varDecl::=(VarDeclNoError) type:t1 varList:v2 SEMICOLON {: RESULT=new VarDeclNoError(t1, v2); RESULT.setLine(t1left); :}
-		| (ErrorVarDecl) error SEMICOLON:e {:System.out.println("Syntax recovery at line "+eleft); :} {: RESULT=new ErrorVarDecl(); :};
+		| (ErrorVarDecl) error SEMICOLON:e {: syntaxErrorMessages+="Syntax recovery at line "+eleft; :} {: RESULT=new ErrorVarDecl(); :};
 varList::=(MultipleVarDecls) var:v1 COMMA varList:v2 {: RESULT=new MultipleVarDecls(v1, v2); RESULT.setLine(v1left); :} | (OneVarDecl) var:v1 {: RESULT=new OneVarDecl(v1); RESULT.setLine(v1left); :};
 //error productions - varDecl & varList?
 var::=(ScalarVar) IDENTIFIER:I1 {: RESULT=new ScalarVar(I1); RESULT.setLine(I1left); :} | (ArrayVar) IDENTIFIER:I1 LSQUARE RSQUARE {: RESULT=new ArrayVar(I1); RESULT.setLine(I1left); :}
-		| (ErrorVar) error:e {:System.out.println("Syntax recovery at line "+eleft); :} {: RESULT=new ErrorVar(); :};
+		| (ErrorVar) error:e {: syntaxErrorMessages+="Syntax recovery at line "+eleft; :} {: RESULT=new ErrorVar(); :};
 	//extends clause? ClassVarDecl?
 classDecl::=(ClassDecl) CLASS IDENTIFIER:I1 classExtension:c2 LBRACE localVarDecl:l3 classMethodDecl:c4 RBRACE {: RESULT=new ClassDecl(I1, c2, l3, c4); RESULT.setLine(I1left); :};
 classExtension::=(Extension) EXTENDS type:t1 {: RESULT=new Extension(t1); RESULT.setLine(t1left); :} | (NoExtension) {: RESULT=new NoExtension(); :} /*eps*/;

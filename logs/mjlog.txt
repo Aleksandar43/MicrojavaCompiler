@@ -1,0 +1,10 @@
+---- Syntax errors ----
+
+Syntax error at line 10: 9
+Syntax recovery at line 10
+Syntax error at line 11: =
+Syntax recovery at line 11
+Syntax error at line 20: -
+Syntax recovery at line 20
+Syntax error at line 40: ;
+Syntax recovery at line 40
