@@ -1,17 +1,19 @@
 // generated with ast extension for cup
 // version 0.8
-// 2/1/2018 14:59:7
+// 2/1/2018 14:59:6
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class Type implements SyntaxNode {
+public class ProgramName implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
+    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
+
     private String name;
 
-    public Type (String name) {
+    public ProgramName (String name) {
         this.name=name;
     }
 
@@ -57,13 +59,13 @@ public class Type implements SyntaxNode {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("Type(\n");
+        buffer.append("ProgramName(\n");
 
         buffer.append(" "+tab+name);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [Type]");
+        buffer.append(") [ProgramName]");
         return buffer.toString();
     }
 }

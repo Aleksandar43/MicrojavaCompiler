@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 2/1/2018 3:14:39
+// 2/1/2018 14:59:10
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -130,6 +130,7 @@ public interface Visitor {
     public void visit(ProgramDeclConstant ProgramDeclConstant);
     public void visit(NoProgramDeclarations NoProgramDeclarations);
     public void visit(ProgramDeclarations ProgramDeclarations);
+    public void visit(ProgramName ProgramName);
     public void visit(Program Program);
 
 }
