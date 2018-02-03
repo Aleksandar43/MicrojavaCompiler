@@ -10,6 +10,7 @@ public class SemanticAnalyzer extends VisitorAdaptor{
     //struct==type
     private Obj programObj;
     private Struct currentType;
+    private int constantValue;
     private String semanticErrors="",semanticUsageDetections="";
     private DumpSymbolTableVisitor localVisitor;
     
@@ -56,11 +57,29 @@ public class SemanticAnalyzer extends VisitorAdaptor{
     }
 
     @Override
+    public void visit(NumberConstant NumberConstant) {
+        constantValue=NumberConstant.getN1();
+    }
+
+    @Override
+    public void visit(CharacterConstant CharacterConstant) {
+        constantValue=CharacterConstant.getC1();
+    }
+
+    @Override
+    public void visit(BooleanConstant BooleanConstant) {
+        Boolean b = BooleanConstant.getB1();
+        if(b) constantValue=1;
+        else constantValue=0;
+    }
+
+    @Override
     public void visit(ConstAssignment ConstAssignment) {
         String constName = ConstAssignment.getConstName().getName();
         Obj constObj = Tab.find(constName);
         if(constObj.equals(Tab.noObj)){
-            Tab.insert(Obj.Con, constName, currentType);
+            Obj newObj=Tab.insert(Obj.Con, constName, currentType);
+            newObj.setAdr(constantValue);
         } else{
             reportError(ConstAssignment.getLine(), "'"+constName+"' is already defined in the current scope");
         }
