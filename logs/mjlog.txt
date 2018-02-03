@@ -1,3 +1,0 @@
----- Semantic errors ----
-Error at line 7: 'jedan' is already defined in the current scope
-Error at line 8: unknown type 'double'

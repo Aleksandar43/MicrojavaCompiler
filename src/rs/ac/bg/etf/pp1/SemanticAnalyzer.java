@@ -36,13 +36,13 @@ public class SemanticAnalyzer extends VisitorAdaptor{
     
     @Override
     public void visit(ProgramName ProgramName) {
-        programObj = Tab.insert(Obj.Prog, ProgramName.getName(), Tab.noType);
+        ProgramName.obj = Tab.insert(Obj.Prog, ProgramName.getName(), Tab.noType);
         Tab.openScope();
     }
 
     @Override
     public void visit(Program Program) {
-        Tab.chainLocalSymbols(programObj);
+        Tab.chainLocalSymbols(Program.getProgramName().obj);
         Tab.closeScope();
     }
 
@@ -78,7 +78,7 @@ public class SemanticAnalyzer extends VisitorAdaptor{
         String constName = ConstAssignment.getConstName().getName();
         Obj constObj = Tab.find(constName);
         if(constObj.equals(Tab.noObj)){
-            Obj newObj=Tab.insert(Obj.Con, constName, currentType);
+            Obj newObj=ConstAssignment.getConstName().obj=Tab.insert(Obj.Con, constName, currentType);
             newObj.setAdr(constantValue);
         } else{
             reportError(ConstAssignment.getLine(), "'"+constName+"' is already defined in the current scope");
@@ -102,7 +102,7 @@ public class SemanticAnalyzer extends VisitorAdaptor{
         String varName = ScalarVar.getName();
         Obj varObj = Tab.find(varName);
         if(varObj.equals(Tab.noObj)){
-            Tab.insert(Obj.Var, varName, currentType);
+            ScalarVar.obj=Tab.insert(Obj.Var, varName, currentType);
         } else{
             reportError(ScalarVar.getLine(), "'"+varName+"' is already defined in the current scope");
         }
@@ -114,7 +114,7 @@ public class SemanticAnalyzer extends VisitorAdaptor{
         String varName = ArrayVar.getName();
         Obj varObj = Tab.find(varName);
         if(varObj.equals(Tab.noObj)){
-            Tab.insert(Obj.Var, varName, new Struct(Struct.Array, currentType));
+            ArrayVar.obj=Tab.insert(Obj.Var, varName, new Struct(Struct.Array, currentType));
         } else{
             reportError(ArrayVar.getLine(), "'"+varName+"' is already defined in the current scope");
         }
