@@ -21,6 +21,7 @@ public class Compiler {
     public static void main(String args[]){
         try {
             Lexer lexer=new Lexer(new FileReader(args[0]));
+            String objectFileName=(args.length<2 ? "test/program.obj" : args[1]);
             logFile=new FileWriter("logs/mjlog.txt");
             logPrintWriter=new PrintWriter(new BufferedWriter(logFile));
             MJParser parser=new MJParser(lexer);
@@ -44,8 +45,8 @@ public class Compiler {
             tsdump();
             if(parser.syntaxErrors==0 && semanticAnalyzer.getSemanticErrors().equals("")){
                 CodeGenerator codeGenerator=new CodeGenerator();
-                rootValue.accept(codeGenerator);
-                FileOutputStream objectFile = new FileOutputStream("test/program.obj");
+                rootValue.traverseBottomUp(codeGenerator);
+                FileOutputStream objectFile = new FileOutputStream(objectFileName);
                 BufferedOutputStream objectStream=new BufferedOutputStream(objectFile);
                 Code.write(objectStream);
                 objectStream.close();
