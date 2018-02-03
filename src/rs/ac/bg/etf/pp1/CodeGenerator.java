@@ -1,11 +1,17 @@
 /* */
 package rs.ac.bg.etf.pp1;
 
+import java.util.Stack;
 import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.mj.runtime.Code;
+import rs.etf.pp1.symboltable.Tab;
+import rs.etf.pp1.symboltable.concepts.Obj;
+import rs.etf.pp1.symboltable.concepts.Struct;
 
 public class CodeGenerator extends VisitorAdaptor{
-    char currentMulOp,currentAddOp;
+    Struct tableBoolType=new Struct(Struct.Bool);
+    Stack<Character> opStack=new Stack<>();
+    Obj designatorObj;
     @Override
     public void visit(Program Program) {
         Code.dataSize=Program.getProgramName().obj.getLocalSymbols().size();
@@ -13,22 +19,23 @@ public class CodeGenerator extends VisitorAdaptor{
 
     @Override
     public void visit(MultiplicationOp MultiplicationOp) {
-        currentMulOp='*';
+        opStack.push('*');
     }
 
     @Override
     public void visit(DivisionOp DivisionOp) {
-        currentMulOp='/';
+        opStack.push('/');
     }
 
     @Override
     public void visit(ModuleOp ModuleOp) {
-        currentMulOp='%';
+        opStack.push('/');
     }
 
     @Override
     public void visit(TermMulOp TermMulOp) {
-        switch(currentMulOp){
+        Character op = opStack.pop();
+        switch(op){
             case '*': Code.put(Code.mul); break;
             case '/': Code.put(Code.div); break;
             case '%': Code.put(Code.rem); break;
@@ -38,21 +45,50 @@ public class CodeGenerator extends VisitorAdaptor{
 
     @Override
     public void visit(AdditionOp AdditionOp) {
-        currentAddOp='+';
+        opStack.push('+');
     }
 
     @Override
     public void visit(SubtractionOp SubtractionOp) {
-        currentAddOp='-';
+        opStack.push('-');
     }
 
     @Override
     public void visit(ExpressionAddOp ExpressionAddOp) {
-        switch(currentAddOp){
-            //extra sub?
+        Character op = opStack.pop();
+        switch(op){
             case '+': Code.put(Code.add); break;
             case '-': Code.put(Code.sub); break;
             default: Code.put(0);
         }
+    }
+
+    @Override
+    public void visit(SimpleDesignator SimpleDesignator) {
+        String designatorName = SimpleDesignator.getI1();
+        designatorObj = Tab.find(designatorName);
+    }
+
+    @Override
+    public void visit(NumberConstant NumberConstant) {
+        Obj o=new Obj(Obj.Con, "", Tab.intType);
+        o.setAdr(NumberConstant.getN1());
+        Code.load(o);
+    }
+    
+    @Override
+    public void visit(CharacterConstant CharacterConstant) {
+        Obj o=new Obj(Obj.Con, "", Tab.charType);
+        o.setAdr(CharacterConstant.getC1());
+        Code.load(o);
+    }
+    
+    @Override
+    public void visit(BooleanConstant BooleanConstant) {
+        Obj o=new Obj(Obj.Con, "", tableBoolType);
+        Boolean b = BooleanConstant.getB1();
+        if(b) o.setAdr(1);
+        else o.setAdr(0);
+        Code.load(o);
     }
 }

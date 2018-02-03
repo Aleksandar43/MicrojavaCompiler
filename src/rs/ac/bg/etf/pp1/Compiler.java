@@ -11,6 +11,8 @@ import java_cup.runtime.Symbol;
 import rs.ac.bg.etf.pp1.ast.Program;
 import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
+import rs.etf.pp1.symboltable.concepts.Obj;
+import rs.etf.pp1.symboltable.concepts.Struct;
 
 public class Compiler {
     private static FileWriter logFile;
@@ -34,6 +36,7 @@ public class Compiler {
             System.out.println("---- Syntax tree ----");
             System.out.println(rootValue.toString(""));
             Tab.init();
+            Tab.currentScope().addToLocals(new Obj(Obj.Type, "bool", new Struct(Struct.Bool)));
             System.out.println("---- Semantic analysis ----");
             SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
             rootValue.traverseBottomUp(semanticAnalyzer);
