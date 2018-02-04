@@ -67,13 +67,8 @@ nonterminal Statement statement;
 non terminal FormParsList formParsList;
 non terminal DesignatorStatement designatorStatement;
 non terminal ActPars actPars;
-nonterminal Condition condition;
 non terminal ActParsList actParsList;
-non terminal CondTerm condTerm;
-nonterminal CondFact condFact;
-nonterminal Relop relop;
-non terminal Term term;
-nonterminal Factor factor;
+non terminal Relop relop;
 non terminal Addop addop;
 nonterminal Mulop mulop;
 non terminal StatementList statementList;
@@ -84,7 +79,7 @@ nonterminal OtherStatements otherStatements;
 non terminal MethodHeader methodHeader;
 
 non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName,var,methodName,designator,constant;
-non terminal rs.etf.pp1.symboltable.concepts.Struct type,returnType,expr;
+non terminal rs.etf.pp1.symboltable.concepts.Struct type,returnType,expr,term,factor,condFact,condTerm,condition;
 
 program::=(Program) PROGRAM programName:p1 programDeclList:p2 LBRACE methodDecl:m3 RBRACE {: RESULT=new Program(p1, p2, m3); RESULT.setLine(p1left); :};
 programName::=(ProgramName) IDENTIFIER:name {: RESULT=new ProgramName(name); RESULT.setLine(nameleft); :};

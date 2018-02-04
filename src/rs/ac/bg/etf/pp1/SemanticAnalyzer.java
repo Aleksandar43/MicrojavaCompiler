@@ -1,6 +1,7 @@
 /* */
 package rs.ac.bg.etf.pp1;
 
+import java.util.Stack;
 import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.symboltable.concepts.*;
 import rs.etf.pp1.symboltable.Tab;
@@ -8,8 +9,10 @@ import rs.etf.pp1.symboltable.visitors.DumpSymbolTableVisitor;
 
 public class SemanticAnalyzer extends VisitorAdaptor{
     //struct==type
+    Struct tableBoolType=new Struct(Struct.Bool);
     private Struct currentType;
     private int constantValue;
+    Stack<Character> opStack=new Stack<>();
     private int methodFormalParameters=0;
     private String semanticErrors="",semanticUsageDetections="";
     private DumpSymbolTableVisitor localVisitor;
@@ -62,19 +65,92 @@ public class SemanticAnalyzer extends VisitorAdaptor{
 
     @Override
     public void visit(NumberConstant NumberConstant) {
-        constantValue=NumberConstant.getN1();
+        Obj o = new Obj(Obj.Con, "", Tab.intType);
+        o.setAdr(NumberConstant.getN1());
+        NumberConstant.obj=o;
     }
 
     @Override
     public void visit(CharacterConstant CharacterConstant) {
-        constantValue=CharacterConstant.getC1();
+        Obj o = new Obj(Obj.Con, "", Tab.charType);
+        o.setAdr(CharacterConstant.getC1());
+        CharacterConstant.obj=o;
     }
 
     @Override
     public void visit(BooleanConstant BooleanConstant) {
-        Boolean b = BooleanConstant.getB1();
-        if(b) constantValue=1;
-        else constantValue=0;
+        Obj o = new Obj(Obj.Con, "", tableBoolType);
+        o.setAdr(BooleanConstant.getB1() ? 1 : 0);
+        BooleanConstant.obj=o;
+    }
+
+    @Override
+    public void visit(FactorConstant FactorConstant) {
+        FactorConstant.struct=FactorConstant.getConstant().obj.getType();
+    }
+
+    @Override
+    public void visit(FactorDesignator FactorDesignator) {
+        FactorDesignator.struct=FactorDesignator.getDesignator().obj.getType();
+    }
+
+    @Override
+    public void visit(TermFactor TermFactor) {
+        TermFactor.struct=TermFactor.getFactor().struct;
+    }
+    
+    @Override
+    public void visit(MultiplicationOp MultiplicationOp) {
+        opStack.push('*');
+    }
+
+    @Override
+    public void visit(DivisionOp DivisionOp) {
+        opStack.push('/');
+    }
+
+    @Override
+    public void visit(ModuleOp ModuleOp) {
+        opStack.push('/');
+    }
+
+    @Override
+    public void visit(TermMulOp TermMulOp) {
+        Character op = opStack.pop();
+        if(!TermMulOp.getTerm().struct.equals(Tab.intType)){
+            reportError(TermMulOp.getLine(), "type of left operand of "+op+" is not int");
+        }
+        if(!TermMulOp.getFactor().struct.equals(Tab.intType)){
+            reportError(TermMulOp.getLine(), "type of right operand of "+op+" is not int");
+        }
+        TermMulOp.struct=Tab.intType; //eliminate multiple errors
+    }
+
+    @Override
+    public void visit(ExpressionTerm ExpressionTerm) {
+        ExpressionTerm.struct=ExpressionTerm.getTerm().struct;
+    }
+    
+    @Override
+    public void visit(AdditionOp AdditionOp) {
+        opStack.push('+');
+    }
+
+    @Override
+    public void visit(SubtractionOp SubtractionOp) {
+        opStack.push('-');
+    }
+
+    @Override
+    public void visit(ExpressionAddOp ExpressionAddOp) {
+        Character op = opStack.pop();
+        if(!ExpressionAddOp.getExpr().struct.equals(Tab.intType)){
+            reportError(ExpressionAddOp.getLine(), "type of left operand of "+op+" is not int");
+        }
+        if(!ExpressionAddOp.getTerm().struct.equals(Tab.intType)){
+            reportError(ExpressionAddOp.getLine(), "type of right operand of "+op+" is not int");
+        }
+        ExpressionAddOp.struct=Tab.intType; //eliminate multiple errors
     }
 
     @Override

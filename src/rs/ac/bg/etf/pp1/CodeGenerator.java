@@ -66,34 +66,54 @@ public class CodeGenerator extends VisitorAdaptor{
     @Override
     public void visit(SimpleDesignator SimpleDesignator) {
         //String designatorName = SimpleDesignator.getI1();
-        designatorStack.push(SimpleDesignator.obj);
+        //designatorStack.push(SimpleDesignator.obj);
     }
 
     @Override
     public void visit(NumberConstant NumberConstant) {
-        Obj o=new Obj(Obj.Con, "", tableBoolType);
-        o.setAdr(NumberConstant.getN1());
-        NumberConstant.obj=o;
+        //Code.load(NumberConstant.obj);
     }
     
     @Override
     public void visit(CharacterConstant CharacterConstant) {
-        Obj o=new Obj(Obj.Con, "", tableBoolType);
-        o.setAdr(CharacterConstant.getC1());
-        CharacterConstant.obj=o;
+        //Code.load(CharacterConstant.obj);
     }
     
     @Override
     public void visit(BooleanConstant BooleanConstant) {
-        Obj o=new Obj(Obj.Con, "", tableBoolType);
-        Boolean b = BooleanConstant.getB1();
-        if(b) o.setAdr(1);
-        else o.setAdr(0);
-        BooleanConstant.obj=o;
+        //Code.load(BooleanConstant.obj);
     }
 
     @Override
     public void visit(FactorConstant FactorConstant) {
         Code.loadConst(FactorConstant.getConstant().obj.getAdr());
+    }
+
+    @Override
+    public void visit(FactorDesignator FactorDesignator) {
+        Code.load(FactorDesignator.getDesignator().obj);
+    }
+
+    @Override
+    public void visit(Assignment Assignment) {
+        Code.store(Assignment.getDesignator().obj);
+    }
+
+    @Override
+    public void visit(Increment Increment) {
+        Obj o = Increment.getDesignator().obj;
+        Code.load(o);
+        Code.loadConst(1);
+        Code.put(Code.add);
+        Code.store(o);
+    }
+
+    @Override
+    public void visit(Decrement Decrement) {
+        Obj o = Decrement.getDesignator().obj;
+        Code.load(o);
+        Code.loadConst(1);
+        Code.put(Code.sub);
+        Code.store(o);
     }
 }
