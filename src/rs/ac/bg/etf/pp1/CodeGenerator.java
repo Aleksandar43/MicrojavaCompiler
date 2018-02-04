@@ -71,24 +71,16 @@ public class CodeGenerator extends VisitorAdaptor{
 
     @Override
     public void visit(NumberConstant NumberConstant) {
-        Obj o=new Obj(Obj.Con, "", Tab.intType);
-        o.setAdr(NumberConstant.getN1());
-        Code.load(o);
+        Code.loadConst(NumberConstant.getN1());
     }
     
     @Override
     public void visit(CharacterConstant CharacterConstant) {
-        Obj o=new Obj(Obj.Con, "", Tab.charType);
-        o.setAdr(CharacterConstant.getC1());
-        Code.load(o);
+        Code.loadConst(CharacterConstant.getC1());
     }
     
     @Override
     public void visit(BooleanConstant BooleanConstant) {
-        Obj o=new Obj(Obj.Con, "", tableBoolType);
-        Boolean b = BooleanConstant.getB1();
-        if(b) o.setAdr(1);
-        else o.setAdr(0);
-        Code.load(o);
+        Code.loadConst(BooleanConstant.getB1() ? 1 : 0);
     }
 }
