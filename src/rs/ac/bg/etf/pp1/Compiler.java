@@ -37,6 +37,7 @@ public class Compiler {
             System.out.println(rootValue.toString(""));
             Tab.init();
             Tab.currentScope().addToLocals(new Obj(Obj.Type, "bool", new Struct(Struct.Bool)));
+            Tab.insert(Obj.Type, "bool", new Struct(Struct.Bool));
             System.out.println("---- Semantic analysis ----");
             SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
             rootValue.traverseBottomUp(semanticAnalyzer);

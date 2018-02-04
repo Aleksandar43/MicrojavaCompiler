@@ -6,10 +6,11 @@ import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.symboltable.concepts.*;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.visitors.DumpSymbolTableVisitor;
+import rs.etf.pp1.symboltable.visitors.SymbolTableVisitor;
 
 public class SemanticAnalyzer extends VisitorAdaptor{
     //struct==type
-    Struct tableBoolType=new Struct(Struct.Bool);
+    Struct tableBoolType=Tab.find("bool").getType();
     private Struct currentType;
     private int constantValue;
     Stack<Character> opStack=new Stack<>();
@@ -79,7 +80,8 @@ public class SemanticAnalyzer extends VisitorAdaptor{
 
     @Override
     public void visit(BooleanConstant BooleanConstant) {
-        Obj o = new Obj(Obj.Con, "", tableBoolType);
+        Obj boolObj = Tab.find("bool");
+        Obj o = new Obj(Obj.Con, "", boolObj.getType());
         o.setAdr(BooleanConstant.getB1() ? 1 : 0);
         BooleanConstant.obj=o;
     }
@@ -258,5 +260,30 @@ public class SemanticAnalyzer extends VisitorAdaptor{
     public void visit(MethodDeclarations MethodDeclarations) {
         Tab.chainLocalSymbols(MethodDeclarations.getMethodHeader().getMethodName().obj);
         Tab.closeScope();
+    }
+
+    @Override
+    public void visit(Assignment Assignment) {
+        if(!Assignment.getExpr().struct.assignableTo(Assignment.getDesignator().obj.getType())){
+            SymbolTableVisitor stv1=new DumpSymbolTableVisitor();
+            stv1.visitStructNode(Assignment.getExpr().struct);
+            SymbolTableVisitor stv2=new DumpSymbolTableVisitor();
+            stv2.visitStructNode(Assignment.getDesignator().obj.getType());
+            reportError(Assignment.getLine(), "cannot assign "+stv1.getOutput()+" to "+stv2.getOutput());
+        }
+    }
+
+    @Override
+    public void visit(Increment Increment) {
+        if(!Increment.getDesignator().obj.getType().equals(Tab.intType)){
+            reportError(Increment.getLine(), "incrementing value type must be int");
+        }
+    }
+    
+    @Override
+    public void visit(Decrement Decrement) {
+        if(!Decrement.getDesignator().obj.getType().equals(Tab.intType)){
+            reportError(Decrement.getLine(), "decrementing value type must be int");
+        }
     }
 }

@@ -17,7 +17,7 @@ program test301
 		bodovi++;
 		bodovi = bodovi + jedan;
 		bodovi = bodovi * pet;
-		// bodovi--;
+		bodovi--;
 		// print(bodovi); 
 			
 		
