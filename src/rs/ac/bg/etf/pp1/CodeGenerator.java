@@ -11,7 +11,7 @@ import rs.etf.pp1.symboltable.concepts.Struct;
 public class CodeGenerator extends VisitorAdaptor{
     Struct tableBoolType=new Struct(Struct.Bool);
     Stack<Character> opStack=new Stack<>();
-    Obj designatorObj;
+    Stack<Obj> designatorStack=new Stack<>();
     @Override
     public void visit(Program Program) {
         Code.dataSize=Program.getProgramName().obj.getLocalSymbols().size();
@@ -65,22 +65,35 @@ public class CodeGenerator extends VisitorAdaptor{
 
     @Override
     public void visit(SimpleDesignator SimpleDesignator) {
-        String designatorName = SimpleDesignator.getI1();
-        designatorObj = Tab.find(designatorName);
+        //String designatorName = SimpleDesignator.getI1();
+        designatorStack.push(SimpleDesignator.obj);
     }
 
     @Override
     public void visit(NumberConstant NumberConstant) {
-        Code.loadConst(NumberConstant.getN1());
+        Obj o=new Obj(Obj.Con, "", tableBoolType);
+        o.setAdr(NumberConstant.getN1());
+        NumberConstant.obj=o;
     }
     
     @Override
     public void visit(CharacterConstant CharacterConstant) {
-        Code.loadConst(CharacterConstant.getC1());
+        Obj o=new Obj(Obj.Con, "", tableBoolType);
+        o.setAdr(CharacterConstant.getC1());
+        CharacterConstant.obj=o;
     }
     
     @Override
     public void visit(BooleanConstant BooleanConstant) {
-        Code.loadConst(BooleanConstant.getB1() ? 1 : 0);
+        Obj o=new Obj(Obj.Con, "", tableBoolType);
+        Boolean b = BooleanConstant.getB1();
+        if(b) o.setAdr(1);
+        else o.setAdr(0);
+        BooleanConstant.obj=o;
+    }
+
+    @Override
+    public void visit(FactorConstant FactorConstant) {
+        Code.loadConst(FactorConstant.getConstant().obj.getAdr());
     }
 }

@@ -94,8 +94,10 @@ public class SemanticAnalyzer extends VisitorAdaptor{
     public void visit(SimpleDesignator SimpleDesignator) {
         String designatorName = SimpleDesignator.getI1();
         Obj designatorObj = Tab.find(designatorName);
-        if(!designatorObj.equals(Tab.noObj))
+        if(!designatorObj.equals(Tab.noObj)){
             reportUsage(SimpleDesignator.getLine(), designatorObj);
+            SimpleDesignator.obj=designatorObj;
+        }
         else{
             reportError(SimpleDesignator.getLine(), "undeclared variable "+designatorName);
         }

@@ -58,7 +58,6 @@ non terminal ProgramDecl programDecl;
 non terminal ConstDecl constDecl;
 nonterminal VarDecl varDecl;
 nonterminal ClassDecl classDecl;
-non terminal Constant constant;
 non terminal VarList varList;
 non terminal ClassExtension classExtension;
 nonterminal LocalVarDecl localVarDecl;
@@ -67,8 +66,7 @@ non terminal FormPars formPars;
 nonterminal Statement statement;
 non terminal FormParsList formParsList;
 non terminal DesignatorStatement designatorStatement;
-non terminal Designator designator;
-nonterminal ActPars actPars;
+non terminal ActPars actPars;
 nonterminal Condition condition;
 non terminal ActParsList actParsList;
 non terminal CondTerm condTerm;
@@ -85,7 +83,7 @@ non terminal IfChainWithUnmatched ifChainWithUnmatched;
 nonterminal OtherStatements otherStatements;
 non terminal MethodHeader methodHeader;
 
-non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName,var,methodName;
+non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName,var,methodName,designator,constant;
 non terminal rs.etf.pp1.symboltable.concepts.Struct type,returnType,expr;
 
 program::=(Program) PROGRAM programName:p1 programDeclList:p2 LBRACE methodDecl:m3 RBRACE {: RESULT=new Program(p1, p2, m3); RESULT.setLine(p1left); :};

@@ -55,13 +55,12 @@ non terminal program;
 non terminal programDeclList, methodDecl;
 non terminal programDecl;
 non terminal constDecl, varDecl, classDecl;
-non terminal constant;
 non terminal varList;
 non terminal classExtension, localVarDecl, classMethodDecl;
 non terminal formPars, statement;
 non terminal formParsList;
 non terminal designatorStatement;
-non terminal designator, actPars, condition;
+non terminal actPars, condition;
 non terminal actParsList;
 non terminal condTerm, condFact, relop;
 non terminal term, factor;
@@ -71,7 +70,7 @@ non terminal constAssignmentList, constAssignment;
 non terminal ifChainWithUnmatched, otherStatements;
 non terminal methodHeader;
 
-non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName,var,methodName;
+non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName,var,methodName,designator,constant;
 non terminal rs.etf.pp1.symboltable.concepts.Struct type,returnType,expr;
 
 program::=(Program) PROGRAM programName programDeclList LBRACE methodDecl RBRACE;
