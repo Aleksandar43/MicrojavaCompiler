@@ -12,7 +12,6 @@ public class SemanticAnalyzer extends VisitorAdaptor{
     //struct==type
     Struct tableBoolType=Tab.find("bool").getType();
     private Struct currentType;
-    private int constantValue;
     Stack<Character> opStack=new Stack<>();
     private int methodFormalParameters=0;
     private String semanticErrors="",semanticUsageDetections="";
@@ -161,7 +160,7 @@ public class SemanticAnalyzer extends VisitorAdaptor{
         Obj constObj = Tab.currentScope.findSymbol(constName);
         if(constObj == null){
             Obj newObj=ConstAssignment.getConstName().obj=Tab.insert(Obj.Con, constName, currentType);
-            newObj.setAdr(constantValue);
+            newObj.setAdr(ConstAssignment.getConstant().obj.getAdr());
         } else{
             reportError(ConstAssignment.getLine(), "'"+constName+"' is already defined in the current scope");
         }
@@ -284,6 +283,21 @@ public class SemanticAnalyzer extends VisitorAdaptor{
     public void visit(Decrement Decrement) {
         if(!Decrement.getDesignator().obj.getType().equals(Tab.intType)){
             reportError(Decrement.getLine(), "decrementing value type must be int");
+        }
+    }
+
+    @Override
+    public void visit(PrintSimple PrintSimple) {
+        Struct exprStruct = PrintSimple.getExpr().struct;
+        if(!exprStruct.equals(Tab.intType) && !exprStruct.equals(Tab.charType) && !exprStruct.equals(tableBoolType)){
+            reportError(PrintSimple.getLine(), "only expressions of int, char or bool can be printed");
+        }
+    }
+    
+    public void visit(PrintWithWidth PrintWithWidth) {
+        Struct exprStruct = PrintWithWidth.getExpr().struct;
+        if(!exprStruct.equals(Tab.intType) && !exprStruct.equals(Tab.charType) && !exprStruct.equals(tableBoolType)){
+            reportError(PrintWithWidth.getLine(), "only expressions of int, char or bool can be printed");
         }
     }
 }

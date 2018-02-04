@@ -15,6 +15,7 @@ public class CodeGenerator extends VisitorAdaptor{
     @Override
     public void visit(Program Program) {
         Code.dataSize=Program.getProgramName().obj.getLocalSymbols().size();
+        Code.mainPc=0; //***temp
     }
 
     @Override
@@ -115,5 +116,17 @@ public class CodeGenerator extends VisitorAdaptor{
         Code.loadConst(1);
         Code.put(Code.sub);
         Code.store(o);
+    }
+
+    @Override
+    public void visit(PrintWithWidth PrintWithWidth) {
+        Code.loadConst(PrintWithWidth.getN2());
+        Code.put(Code.print);
+    }
+
+    @Override
+    public void visit(PrintSimple PrintSimple) {
+        Code.loadConst(0);
+        Code.put(Code.print);
     }
 }

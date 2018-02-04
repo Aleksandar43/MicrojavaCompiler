@@ -18,7 +18,7 @@ program test301
 		bodovi = bodovi + jedan;
 		bodovi = bodovi * pet;
 		bodovi--;
-		// print(bodovi); 
+		print(bodovi); 
 			
 		
 		// niz = new int[2];
