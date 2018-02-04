@@ -55,13 +55,13 @@ non terminal program;
 non terminal programDeclList, methodDecl;
 non terminal programDecl;
 non terminal constDecl, varDecl, classDecl;
-non terminal type, constant;
+non terminal constant;
 non terminal varList;
 non terminal classExtension, localVarDecl, classMethodDecl;
-non terminal returnType, formPars, statement;
+non terminal formPars, statement;
 non terminal formParsList;
 non terminal designatorStatement;
-non terminal designator, expr, actPars, condition;
+non terminal designator, actPars, condition;
 non terminal actParsList;
 non terminal condTerm, condFact, relop;
 non terminal term, factor;
@@ -69,8 +69,10 @@ non terminal addop, mulop;
 non terminal statementList;
 non terminal constAssignmentList, constAssignment;
 non terminal ifChainWithUnmatched, otherStatements;
+non terminal methodHeader;
 
-non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName,var;
+non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName,var,methodName;
+non terminal rs.etf.pp1.symboltable.concepts.Struct type,returnType,expr;
 
 program::=(Program) PROGRAM programName programDeclList LBRACE methodDecl RBRACE;
 programName::=(ProgramName) IDENTIFIER:name;
@@ -93,10 +95,12 @@ classDecl::=(ClassDecl) CLASS IDENTIFIER classExtension LBRACE localVarDecl clas
 classExtension::=(Extension) EXTENDS type | (NoExtension) /*eps*/;
 localVarDecl::=(LocalVarDeclarations) varDecl localVarDecl | (NoLocalVarDeclarations) /*eps*/;
 classMethodDecl::=(ClassMethods) LBRACE methodDecl RBRACE | (NoClassMethods) /*eps*/;
-methodDecl::=(MethodDeclarations) returnType IDENTIFIER LPAREN formPars RPAREN localVarDecl LBRACE statementList RBRACE methodDecl | (NoMethodDeclarations) /*eps*/;
+methodDecl::=(MethodDeclarations) methodDecl methodHeader LBRACE statementList RBRACE | (NoMethodDeclarations) /*eps*/;
+methodHeader::=(MethodHeader) returnType methodName LPAREN formPars RPAREN localVarDecl;
+methodName::=(MethodName) IDENTIFIER:name;
 returnType::=(ReturnTypeNonVoid) type | (ReturnTypeVoid) VOID;
 formPars::=(FormalParameters) formParsList | (NoFormalParameters) /*eps*/;
-formParsList::=(MultipleFormalParameters) type var COMMA formParsList | (OneFormalParameter) type var;
+formParsList::=(MultipleFormalParameters) formParsList COMMA type var | (OneFormalParameter) type var;
 statementList::=(Statements) statement statementList | (NoStatements) /*eps*/;
 statement::=(IfsUnmatched) ifChainWithUnmatched | (NotIfsUnmatched) otherStatements
 			| (ErrorStatement) error SEMICOLON:e {: parser.syntaxErrorMessages+="Syntax recovery at line "+eleft; :};

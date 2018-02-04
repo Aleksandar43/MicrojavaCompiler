@@ -8,9 +8,9 @@ import rs.etf.pp1.symboltable.visitors.DumpSymbolTableVisitor;
 
 public class SemanticAnalyzer extends VisitorAdaptor{
     //struct==type
-    private Obj programObj;
     private Struct currentType;
     private int constantValue;
+    private int methodFormalParameters=0;
     private String semanticErrors="",semanticUsageDetections="";
     private DumpSymbolTableVisitor localVisitor;
     
@@ -42,6 +42,10 @@ public class SemanticAnalyzer extends VisitorAdaptor{
 
     @Override
     public void visit(Program Program) {
+        Obj main = Tab.find("main");
+        if(main==Tab.noObj || main.getKind()!=Obj.Meth){
+            reportError(Program.getLine(), "main method is not defined");
+        }
         Tab.chainLocalSymbols(Program.getProgramName().obj);
         Tab.closeScope();
     }
@@ -53,7 +57,7 @@ public class SemanticAnalyzer extends VisitorAdaptor{
         if(typeObj.equals(Tab.noObj)){
             reportError(Type.getLine(), "unknown type '"+name+"'");
         }
-        currentType=typeObj.getType();
+        currentType=Type.struct=typeObj.getType();
     }
 
     @Override
@@ -76,8 +80,8 @@ public class SemanticAnalyzer extends VisitorAdaptor{
     @Override
     public void visit(ConstAssignment ConstAssignment) {
         String constName = ConstAssignment.getConstName().getName();
-        Obj constObj = Tab.find(constName);
-        if(constObj.equals(Tab.noObj)){
+        Obj constObj = Tab.currentScope.findSymbol(constName);
+        if(constObj == null){
             Obj newObj=ConstAssignment.getConstName().obj=Tab.insert(Obj.Con, constName, currentType);
             newObj.setAdr(constantValue);
         } else{
@@ -100,8 +104,8 @@ public class SemanticAnalyzer extends VisitorAdaptor{
     @Override
     public void visit(ScalarVar ScalarVar) {
         String varName = ScalarVar.getName();
-        Obj varObj = Tab.find(varName);
-        if(varObj.equals(Tab.noObj)){
+        Obj varObj = Tab.currentScope.findSymbol(varName);
+        if(varObj == null){
             ScalarVar.obj=Tab.insert(Obj.Var, varName, currentType);
         } else{
             reportError(ScalarVar.getLine(), "'"+varName+"' is already defined in the current scope");
@@ -112,12 +116,69 @@ public class SemanticAnalyzer extends VisitorAdaptor{
     @Override
     public void visit(ArrayVar ArrayVar) {
         String varName = ArrayVar.getName();
-        Obj varObj = Tab.find(varName);
-        if(varObj.equals(Tab.noObj)){
+        Obj varObj = Tab.currentScope.findSymbol(varName);
+        if(varObj == null){
             ArrayVar.obj=Tab.insert(Obj.Var, varName, new Struct(Struct.Array, currentType));
         } else{
             reportError(ArrayVar.getLine(), "'"+varName+"' is already defined in the current scope");
         }
         currentType=Tab.noType;
+    }
+
+    @Override
+    public void visit(ReturnTypeVoid ReturnTypeVoid) {
+        methodFormalParameters=0;
+        ReturnTypeVoid.struct=Tab.noType;
+    }
+
+    @Override
+    public void visit(ReturnTypeNonVoid ReturnTypeNonVoid) {
+        methodFormalParameters=0;
+        String typeName = ReturnTypeNonVoid.getType().getName();
+        Obj typeObj = Tab.find(typeName);
+        if(typeObj.equals(Tab.noObj)){
+            reportError(ReturnTypeNonVoid.getLine(), "unknown type '"+typeName+"'");
+            ReturnTypeNonVoid.struct=Tab.noType;
+        } else{
+            ReturnTypeNonVoid.struct=typeObj.getType();
+        }
+    }
+
+    @Override
+    public void visit(OneFormalParameter OneFormalParameter) {
+        methodFormalParameters++;
+        //Tab.insert(Obj.Var, OneFormalParameter.getType().getName(), OneFormalParameter.getType().struct);
+    }
+
+    @Override
+    public void visit(MultipleFormalParameters MultipleFormalParameters) {
+        methodFormalParameters++;
+        //Tab.insert(Obj.Var, MultipleFormalParameters.getType().getName(), MultipleFormalParameters.getType().struct);
+    }
+
+    @Override
+    public void visit(MethodName MethodName) {
+        String methodName = MethodName.getName();
+        Obj methodObj = Tab.currentScope.findSymbol(methodName);
+        ReturnType rType = ((MethodHeader)MethodName.getParent()).getReturnType();
+        if(methodObj == null){
+            MethodName.obj=Tab.insert(Obj.Meth, methodName, rType.struct);
+        } else{
+            reportError(MethodName.getLine(), "'"+methodName+"' is already defined in the current scope");
+            MethodName.obj=Tab.insert(Obj.Meth, methodName, rType.struct);
+        }
+        Tab.openScope();
+    }
+
+    @Override
+    public void visit(MethodHeader MethodHeader) {
+        Obj methodObj = MethodHeader.getMethodName().obj;
+        methodObj.setLevel(methodFormalParameters);
+    }
+
+    @Override
+    public void visit(MethodDeclarations MethodDeclarations) {
+        Tab.chainLocalSymbols(MethodDeclarations.getMethodHeader().getMethodName().obj);
+        Tab.closeScope();
     }
 }

@@ -58,19 +58,16 @@ non terminal ProgramDecl programDecl;
 non terminal ConstDecl constDecl;
 nonterminal VarDecl varDecl;
 nonterminal ClassDecl classDecl;
-non terminal Type type;
-nonterminal Constant constant;
+non terminal Constant constant;
 non terminal VarList varList;
 non terminal ClassExtension classExtension;
 nonterminal LocalVarDecl localVarDecl;
 nonterminal ClassMethodDecl classMethodDecl;
-non terminal ReturnType returnType;
-nonterminal FormPars formPars;
+non terminal FormPars formPars;
 nonterminal Statement statement;
 non terminal FormParsList formParsList;
 non terminal DesignatorStatement designatorStatement;
 non terminal Designator designator;
-nonterminal Expr expr;
 nonterminal ActPars actPars;
 nonterminal Condition condition;
 non terminal ActParsList actParsList;
@@ -86,8 +83,10 @@ non terminal ConstAssignmentList constAssignmentList;
 nonterminal ConstAssignment constAssignment;
 non terminal IfChainWithUnmatched ifChainWithUnmatched;
 nonterminal OtherStatements otherStatements;
+non terminal MethodHeader methodHeader;
 
-non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName,var;
+non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName,var,methodName;
+non terminal rs.etf.pp1.symboltable.concepts.Struct type,returnType,expr;
 
 program::=(Program) PROGRAM programName:p1 programDeclList:p2 LBRACE methodDecl:m3 RBRACE {: RESULT=new Program(p1, p2, m3); RESULT.setLine(p1left); :};
 programName::=(ProgramName) IDENTIFIER:name {: RESULT=new ProgramName(name); RESULT.setLine(nameleft); :};
@@ -110,10 +109,12 @@ classDecl::=(ClassDecl) CLASS IDENTIFIER:I1 classExtension:c2 LBRACE localVarDec
 classExtension::=(Extension) EXTENDS type:t1 {: RESULT=new Extension(t1); RESULT.setLine(t1left); :} | (NoExtension) {: RESULT=new NoExtension(); :} /*eps*/;
 localVarDecl::=(LocalVarDeclarations) varDecl:v1 localVarDecl:l2 {: RESULT=new LocalVarDeclarations(v1, l2); RESULT.setLine(v1left); :} | (NoLocalVarDeclarations) {: RESULT=new NoLocalVarDeclarations(); :} /*eps*/;
 classMethodDecl::=(ClassMethods) LBRACE methodDecl:m1 RBRACE {: RESULT=new ClassMethods(m1); RESULT.setLine(m1left); :} | (NoClassMethods) {: RESULT=new NoClassMethods(); :} /*eps*/;
-methodDecl::=(MethodDeclarations) returnType:r1 IDENTIFIER:I2 LPAREN formPars:f3 RPAREN localVarDecl:l4 LBRACE statementList:s5 RBRACE methodDecl:m6 {: RESULT=new MethodDeclarations(r1, I2, f3, l4, s5, m6); RESULT.setLine(r1left); :} | (NoMethodDeclarations) {: RESULT=new NoMethodDeclarations(); :} /*eps*/;
+methodDecl::=(MethodDeclarations) methodDecl:m1 methodHeader:m2 LBRACE statementList:s3 RBRACE {: RESULT=new MethodDeclarations(m1, m2, s3); RESULT.setLine(m1left); :} | (NoMethodDeclarations) {: RESULT=new NoMethodDeclarations(); :} /*eps*/;
+methodHeader::=(MethodHeader) returnType:r1 methodName:m2 LPAREN formPars:f3 RPAREN localVarDecl:l4 {: RESULT=new MethodHeader(r1, m2, f3, l4); RESULT.setLine(r1left); :};
+methodName::=(MethodName) IDENTIFIER:name {: RESULT=new MethodName(name); RESULT.setLine(nameleft); :};
 returnType::=(ReturnTypeNonVoid) type:t1 {: RESULT=new ReturnTypeNonVoid(t1); RESULT.setLine(t1left); :} | (ReturnTypeVoid) VOID {: RESULT=new ReturnTypeVoid(); :};
 formPars::=(FormalParameters) formParsList:f1 {: RESULT=new FormalParameters(f1); RESULT.setLine(f1left); :} | (NoFormalParameters) {: RESULT=new NoFormalParameters(); :} /*eps*/;
-formParsList::=(MultipleFormalParameters) type:t1 var:v2 COMMA formParsList:f3 {: RESULT=new MultipleFormalParameters(t1, v2, f3); RESULT.setLine(t1left); :} | (OneFormalParameter) type:t1 var:v2 {: RESULT=new OneFormalParameter(t1, v2); RESULT.setLine(t1left); :};
+formParsList::=(MultipleFormalParameters) formParsList:f1 COMMA type:t2 var:v3 {: RESULT=new MultipleFormalParameters(f1, t2, v3); RESULT.setLine(f1left); :} | (OneFormalParameter) type:t1 var:v2 {: RESULT=new OneFormalParameter(t1, v2); RESULT.setLine(t1left); :};
 statementList::=(Statements) statement:s1 statementList:s2 {: RESULT=new Statements(s1, s2); RESULT.setLine(s1left); :} | (NoStatements) {: RESULT=new NoStatements(); :} /*eps*/;
 statement::=(IfsUnmatched) ifChainWithUnmatched:i1 {: RESULT=new IfsUnmatched(i1); RESULT.setLine(i1left); :} | (NotIfsUnmatched) otherStatements:o1 {: RESULT=new NotIfsUnmatched(o1); RESULT.setLine(o1left); :}
 			| (ErrorStatement) error SEMICOLON:e {: parser.syntaxErrorMessages+="Syntax recovery at line "+eleft; :} {: RESULT=new ErrorStatement(); :};

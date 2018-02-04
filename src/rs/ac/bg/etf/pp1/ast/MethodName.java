@@ -5,15 +5,15 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class Type implements SyntaxNode {
+public class MethodName implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    public rs.etf.pp1.symboltable.concepts.Struct struct = null;
+    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
 
     private String name;
 
-    public Type (String name) {
+    public MethodName (String name) {
         this.name=name;
     }
 
@@ -59,13 +59,13 @@ public class Type implements SyntaxNode {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("Type(\n");
+        buffer.append("MethodName(\n");
 
         buffer.append(" "+tab+name);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [Type]");
+        buffer.append(") [MethodName]");
         return buffer.toString();
     }
 }
