@@ -294,10 +294,19 @@ public class SemanticAnalyzer extends VisitorAdaptor{
         }
     }
     
+    @Override
     public void visit(PrintWithWidth PrintWithWidth) {
         Struct exprStruct = PrintWithWidth.getExpr().struct;
         if(!exprStruct.equals(Tab.intType) && !exprStruct.equals(Tab.charType) && !exprStruct.equals(tableBoolType)){
             reportError(PrintWithWidth.getLine(), "only expressions of int, char or bool can be printed");
         }
+    }
+
+    @Override
+    public void visit(FactorNewArrayAllocation FactorNewArrayAllocation) {
+        if(!FactorNewArrayAllocation.getExpr().struct.equals(Tab.intType)){
+            reportError(FactorNewArrayAllocation.getLine(), "number of elements must be int type");
+        }
+        FactorNewArrayAllocation.struct=new Struct(Struct.Array, FactorNewArrayAllocation.getType().struct);
     }
 }
