@@ -332,4 +332,12 @@ public class SemanticAnalyzer extends VisitorAdaptor{
     public void visit(FactorExpressionInParentheses FactorExpressionInParentheses) {
         FactorExpressionInParentheses.struct=FactorExpressionInParentheses.getExpr().struct;
     }
+
+    @Override
+    public void visit(Read Read) {
+        Struct exprStruct = Read.getDesignator().obj.getType();
+        if(!exprStruct.equals(Tab.intType) && !exprStruct.equals(Tab.charType) && !exprStruct.equals(tableBoolType)){
+            reportError(Read.getLine(), "values can be read only into int, char and bool variables");
+        }
+    }
 }

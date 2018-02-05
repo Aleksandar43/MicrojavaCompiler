@@ -143,4 +143,11 @@ public class CodeGenerator extends VisitorAdaptor{
     public void visit(ArrayDesignator ArrayDesignator) {
         Code.load(ArrayDesignator.obj);
     }
+
+    @Override
+    public void visit(Read Read) {
+        if(Read.getDesignator().obj.getType().equals(Tab.charType)) Code.put(Code.bread);
+        else Code.put(Code.read);
+        Code.store(Read.getDesignator().obj);
+    }
 }
