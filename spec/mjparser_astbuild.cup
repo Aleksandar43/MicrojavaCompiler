@@ -78,7 +78,7 @@ non terminal IfChainWithUnmatched ifChainWithUnmatched;
 nonterminal OtherStatements otherStatements;
 non terminal MethodHeader methodHeader;
 
-non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName,var,methodName,designator,constant;
+non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName,var,methodName,designator,constant,arrayDesignator;
 non terminal rs.etf.pp1.symboltable.concepts.Struct type,returnType,expr,term,factor,condFact,condTerm,condition;
 
 program::=(Program) PROGRAM programName:p1 programDeclList:p2 LBRACE methodDecl:m3 RBRACE {: RESULT=new Program(p1, p2, m3); RESULT.setLine(p1left); :};
@@ -137,6 +137,7 @@ expr::=(ExpressionTerm) term:t1 {: RESULT=new ExpressionTerm(t1); RESULT.setLine
 term::=(TermFactor) factor:f1 {: RESULT=new TermFactor(f1); RESULT.setLine(f1left); :} | (TermMulOp) term:t1 mulop:m2 factor:f3 {: RESULT=new TermMulOp(t1, m2, f3); RESULT.setLine(t1left); :};
 factor::=(FactorDesignator) designator:d1 {: RESULT=new FactorDesignator(d1); RESULT.setLine(d1left); :} | (FactorConstant) constant:c1 {: RESULT=new FactorConstant(c1); RESULT.setLine(c1left); :} | (FactorExpressionInParentheses) LPAREN expr:e1 RPAREN {: RESULT=new FactorExpressionInParentheses(e1); RESULT.setLine(e1left); :} | (FactorFunctionCall) designator:d1 LPAREN actPars:a2 RPAREN {: RESULT=new FactorFunctionCall(d1, a2); RESULT.setLine(d1left); :} | (FactorNewClassInstance) NEW type:t1 {: RESULT=new FactorNewClassInstance(t1); RESULT.setLine(t1left); :} | (FactorNewArrayAllocation) NEW type:t1 LSQUARE expr:e2 RSQUARE {: RESULT=new FactorNewArrayAllocation(t1, e2); RESULT.setLine(t1left); :};
 	//complexDesignator
-designator::=(SimpleDesignator) IDENTIFIER:I1 {: RESULT=new SimpleDesignator(I1); RESULT.setLine(I1left); :} | (ClassField) designator:d1 DOT IDENTIFIER:I2 {: RESULT=new ClassField(d1, I2); RESULT.setLine(d1left); :} | (ArrayElementDesignator) designator:d1 LSQUARE expr:e2 RSQUARE {: RESULT=new ArrayElementDesignator(d1, e2); RESULT.setLine(d1left); :};
+designator::=(SimpleDesignator) IDENTIFIER:I1 {: RESULT=new SimpleDesignator(I1); RESULT.setLine(I1left); :} | (ClassField) designator:d1 DOT IDENTIFIER:I2 {: RESULT=new ClassField(d1, I2); RESULT.setLine(d1left); :} | (ArrayElementDesignator) arrayDesignator:a1 LSQUARE expr:e2 RSQUARE {: RESULT=new ArrayElementDesignator(a1, e2); RESULT.setLine(a1left); :};
+arrayDesignator::=(ArrayDesignator) designator:d1 {: RESULT=new ArrayDesignator(d1); RESULT.setLine(d1left); :};
 addop::=(AdditionOp) PLUS {: RESULT=new AdditionOp(); :} | (SubtractionOp) MINUS {: RESULT=new SubtractionOp(); :};
 mulop::=(MultiplicationOp) ASTERISK {: RESULT=new MultiplicationOp(); :} | (DivisionOp) SLASH {: RESULT=new DivisionOp(); :} | (ModuleOp) PERCENT {: RESULT=new ModuleOp(); :};

@@ -136,4 +136,9 @@ public class CodeGenerator extends VisitorAdaptor{
         if(FactorNewArrayAllocation.struct.equals(Tab.charType)) Code.put(0);
         else Code.put(1);
     }
+
+    @Override
+    public void visit(ArrayDesignator ArrayDesignator) {
+        Code.load(ArrayDesignator.obj);
+    }
 }

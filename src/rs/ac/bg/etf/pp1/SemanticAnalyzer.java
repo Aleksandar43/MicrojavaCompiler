@@ -309,4 +309,22 @@ public class SemanticAnalyzer extends VisitorAdaptor{
         }
         FactorNewArrayAllocation.struct=new Struct(Struct.Array, FactorNewArrayAllocation.getType().struct);
     }
+
+    @Override
+    public void visit(ArrayDesignator ArrayDesignator) {
+        ArrayDesignator.obj=ArrayDesignator.getDesignator().obj;
+    }
+
+    @Override
+    public void visit(ArrayElementDesignator ArrayElementDesignator) {
+        if(!ArrayElementDesignator.getExpr().struct.equals(Tab.intType)){
+            reportError(ArrayElementDesignator.getLine(), "number of elements must be int type");
+        }
+        if(ArrayElementDesignator.getArrayDesignator().obj.getType().getKind()!=Struct.Array){
+            reportError(ArrayElementDesignator.getLine(), "'"+ArrayElementDesignator.getArrayDesignator().obj.getName()+"' is not an array variable");
+            ArrayElementDesignator.obj=new Obj(Obj.Elem, "", Tab.noType);
+        } else{
+            ArrayElementDesignator.obj=new Obj(Obj.Elem, "", ArrayElementDesignator.getArrayDesignator().obj.getType().getElemType());
+        }
+    }
 }

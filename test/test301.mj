@@ -22,8 +22,8 @@ program test301
 			
 		
 		niz = new int[2];
-		// niz[0] = pet;
-		// niz[1] = 10;
+		niz[0] = pet;
+		niz[1] = 10;
 		// bodovi = niz[1]/niz[0];
 		// print(bodovi); 
 		// print(niz[1]);

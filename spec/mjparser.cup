@@ -69,7 +69,7 @@ non terminal constAssignmentList, constAssignment;
 non terminal ifChainWithUnmatched, otherStatements;
 non terminal methodHeader;
 
-non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName,var,methodName,designator,constant;
+non terminal rs.etf.pp1.symboltable.concepts.Obj programName,constName,var,methodName,designator,constant,arrayDesignator;
 non terminal rs.etf.pp1.symboltable.concepts.Struct type,returnType,expr,term,factor,condFact,condTerm,condition;
 
 program::=(Program) PROGRAM programName programDeclList LBRACE methodDecl RBRACE;
@@ -128,6 +128,7 @@ expr::=(ExpressionTerm) term | (ExpressionNegation) MINUS term | (ExpressionAddO
 term::=(TermFactor) factor | (TermMulOp) term mulop factor;
 factor::=(FactorDesignator) designator | (FactorConstant) constant | (FactorExpressionInParentheses) LPAREN expr RPAREN | (FactorFunctionCall) designator LPAREN actPars RPAREN | (FactorNewClassInstance) NEW type | (FactorNewArrayAllocation) NEW type LSQUARE expr RSQUARE;
 	//complexDesignator
-designator::=(SimpleDesignator) IDENTIFIER | (ClassField) designator DOT IDENTIFIER | (ArrayElementDesignator) designator LSQUARE expr RSQUARE;
+designator::=(SimpleDesignator) IDENTIFIER | (ClassField) designator DOT IDENTIFIER | (ArrayElementDesignator) arrayDesignator LSQUARE expr RSQUARE;
+arrayDesignator::=(ArrayDesignator) designator;
 addop::=(AdditionOp) PLUS | (SubtractionOp) MINUS;
 mulop::=(MultiplicationOp) ASTERISK | (DivisionOp) SLASH | (ModuleOp) PERCENT;
