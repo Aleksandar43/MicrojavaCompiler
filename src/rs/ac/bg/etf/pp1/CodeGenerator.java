@@ -121,19 +121,21 @@ public class CodeGenerator extends VisitorAdaptor{
     @Override
     public void visit(PrintWithWidth PrintWithWidth) {
         Code.loadConst(PrintWithWidth.getN2());
-        Code.put(Code.print);
+        if(PrintWithWidth.getExpr().struct.equals(Tab.charType)) Code.put(Code.bprint);
+        else Code.put(Code.print);
     }
 
     @Override
     public void visit(PrintSimple PrintSimple) {
         Code.loadConst(0);
-        Code.put(Code.print);
+        if(PrintSimple.getExpr().struct.equals(Tab.charType)) Code.put(Code.bprint);
+        else Code.put(Code.print);
     }
 
     @Override
     public void visit(FactorNewArrayAllocation FactorNewArrayAllocation) {
         Code.put(Code.newarray);
-        if(FactorNewArrayAllocation.struct.equals(Tab.charType)) Code.put(0);
+        if(FactorNewArrayAllocation.struct.equals(new Struct(Struct.Array, Tab.charType))) Code.put(0);
         else Code.put(1);
     }
 
