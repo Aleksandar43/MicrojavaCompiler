@@ -124,7 +124,7 @@ condition::=(ConditionTerm) condTerm | (LogicalOr) condTerm OR condTerm;
 condTerm::=(ConditionFact) condFact | (LogicalAnd) condFact AND condFact;
 condFact::=(ConditionRelation) expr relop expr | (ConditionExpression) expr;
 relop::=(EqualOp) EQUALEQUAL | (NotEqualOp) NOTEQUAL | (GreaterOp) GREATER | (GreaterOrEqualOp) GREATEREQUAL | (LessOp) LESS | (LessOrEqualOp) LESSEQUAL;
-expr::=(ExpressionTerm) term | (ExpressionNegation) MINUS term | (ExpressionAddOp) expr addop term; //Negation here!?
+expr::=(ExpressionTerm) term | (ExpressionNegation) MINUS term | (ExpressionAddOp) expr addop term;
 term::=(TermFactor) factor | (TermMulOp) term mulop factor;
 factor::=(FactorDesignator) designator | (FactorConstant) constant | (FactorExpressionInParentheses) LPAREN expr RPAREN | (FactorFunctionCall) designator LPAREN actPars RPAREN | (FactorNewClassInstance) NEW type | (FactorNewArrayAllocation) NEW type LSQUARE expr RSQUARE;
 	//complexDesignator

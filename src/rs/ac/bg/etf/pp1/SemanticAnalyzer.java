@@ -327,4 +327,9 @@ public class SemanticAnalyzer extends VisitorAdaptor{
             ArrayElementDesignator.obj=new Obj(Obj.Elem, "", ArrayElementDesignator.getArrayDesignator().obj.getType().getElemType());
         }
     }
+
+    @Override
+    public void visit(FactorExpressionInParentheses FactorExpressionInParentheses) {
+        FactorExpressionInParentheses.struct=FactorExpressionInParentheses.getExpr().struct;
+    }
 }

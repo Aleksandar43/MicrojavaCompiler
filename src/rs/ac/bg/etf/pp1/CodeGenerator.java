@@ -30,7 +30,7 @@ public class CodeGenerator extends VisitorAdaptor{
 
     @Override
     public void visit(ModuleOp ModuleOp) {
-        opStack.push('/');
+        opStack.push('%');
     }
 
     @Override
