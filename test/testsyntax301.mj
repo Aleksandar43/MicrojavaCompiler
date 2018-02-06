@@ -16,7 +16,7 @@ program test301
 		bodovi = 0;
 		bodovi++;
 		bodovi = bodovi + jedan;
-		bodovi = bodovi * pet;
+		bodovi * pet;
 		bodovi-; //syntax error
 		print(bodovi); 
 			

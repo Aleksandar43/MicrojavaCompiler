@@ -274,14 +274,22 @@ public class SemanticAnalyzer extends VisitorAdaptor{
 
     @Override
     public void visit(Increment Increment) {
-        if(!Increment.getDesignator().obj.getType().equals(Tab.intType)){
+        if(Increment.getDesignator().obj.getKind()!=Obj.Var
+                && Increment.getDesignator().obj.getKind()!=Obj.Elem){
+            reportError(Increment.getLine(), "trying to increment a non-variable '"+Increment.getDesignator().obj.getName()+"'");
+        }
+        else if(!Increment.getDesignator().obj.getType().equals(Tab.intType)){
             reportError(Increment.getLine(), "incrementing value type must be int");
         }
     }
     
     @Override
     public void visit(Decrement Decrement) {
-        if(!Decrement.getDesignator().obj.getType().equals(Tab.intType)){
+        if(Decrement.getDesignator().obj.getKind()!=Obj.Var
+                && Decrement.getDesignator().obj.getKind()!=Obj.Elem){
+            reportError(Decrement.getLine(), "trying to decrement a non-variable '"+Decrement.getDesignator().obj.getName()+"'");
+        }
+        else if(!Decrement.getDesignator().obj.getType().equals(Tab.intType)){
             reportError(Decrement.getLine(), "decrementing value type must be int");
         }
     }

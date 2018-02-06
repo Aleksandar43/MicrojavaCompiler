@@ -35,18 +35,20 @@ public class Compiler {
             }
             System.out.println("---- Syntax tree ----");
             System.out.println(rootValue.toString(""));
-            Tab.init();
-            Tab.currentScope().addToLocals(new Obj(Obj.Type, "bool", new Struct(Struct.Bool)));
-            Tab.insert(Obj.Type, "bool", new Struct(Struct.Bool));
-            System.out.println("---- Semantic analysis ----");
             SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
-            rootValue.traverseBottomUp(semanticAnalyzer);
-            System.out.println(semanticAnalyzer.getSemanticUsageDetections());
-            if(!semanticAnalyzer.getSemanticErrors().equals("")){
-                System.err.println(semanticAnalyzer.getSemanticErrors());
-                logPrintWriter.write("---- Semantic errors ----\n"+semanticAnalyzer.getSemanticErrors());
+            if (parser.syntaxErrors==0) {
+                Tab.init();
+                Tab.currentScope().addToLocals(new Obj(Obj.Type, "bool", new Struct(Struct.Bool)));
+                Tab.insert(Obj.Type, "bool", new Struct(Struct.Bool));
+                System.out.println("---- Semantic analysis ----");
+                rootValue.traverseBottomUp(semanticAnalyzer);
+                System.out.println(semanticAnalyzer.getSemanticUsageDetections());
+                if (!semanticAnalyzer.getSemanticErrors().equals("")) {
+                    System.err.println(semanticAnalyzer.getSemanticErrors());
+                    logPrintWriter.write("---- Semantic errors ----\n" + semanticAnalyzer.getSemanticErrors());
+                }
+                tsdump();
             }
-            tsdump();
             if(parser.syntaxErrors==0 && semanticAnalyzer.getSemanticErrors().equals("")){
                 CodeGenerator codeGenerator=new CodeGenerator();
                 rootValue.traverseBottomUp(codeGenerator);
@@ -55,7 +57,7 @@ public class Compiler {
                 Code.write(objectStream);
                 objectStream.close();
                 System.out.println("File compiled sucessfully");
-            }
+            } else {System.out.println("Compile errors found");}
             logPrintWriter.close();
             logFile.close();
         } catch (Exception ex) {
