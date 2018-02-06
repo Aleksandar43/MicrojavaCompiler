@@ -12,10 +12,11 @@ public class CodeGenerator extends VisitorAdaptor{
     Struct tableBoolType=new Struct(Struct.Bool);
     Stack<Character> opStack=new Stack<>();
     Stack<Obj> designatorStack=new Stack<>();
+    private int methodFormalParameters=0;
+    private int localVariables=0;
     @Override
     public void visit(Program Program) {
         Code.dataSize=Program.getProgramName().obj.getLocalSymbols().size();
-        Code.mainPc=0; //***temp
     }
 
     @Override
@@ -149,5 +150,59 @@ public class CodeGenerator extends VisitorAdaptor{
         if(Read.getDesignator().obj.getType().equals(Tab.charType)) Code.put(Code.bread);
         else Code.put(Code.read);
         Code.store(Read.getDesignator().obj);
+    }
+
+    @Override
+    public void visit(ReturnTypeVoid ReturnTypeVoid) {
+        methodFormalParameters=0;
+        localVariables=0;
+    }
+
+    @Override
+    public void visit(ReturnTypeNonVoid ReturnTypeNonVoid) {
+        methodFormalParameters=0;
+        localVariables=0;
+    }
+    
+    @Override
+    public void visit(OneFormalParameter OneFormalParameter) {
+        methodFormalParameters++;
+    }
+
+    @Override
+    public void visit(MultipleFormalParameters MultipleFormalParameters) {
+        methodFormalParameters++;
+    }
+
+    @Override
+    public void visit(ScalarVar ScalarVar) {
+        localVariables++;
+    }
+
+    @Override
+    public void visit(ArrayVar ArrayVar) {
+        localVariables++;
+    }
+    
+    @Override
+    public void visit(MethodName MethodName) {
+        Obj methodObj = MethodName.obj;
+        if(methodObj.getName().equals("main")) Code.mainPc=Code.pc;
+        methodObj.setAdr(Code.pc);
+    }
+    
+    @Override
+    public void visit(MethodHeader MethodHeader) {
+        Code.put(Code.enter);
+        Code.put(methodFormalParameters);
+        Code.put(methodFormalParameters+localVariables);
+    }
+
+    @Override
+    public void visit(MethodDeclarations MethodDeclarations) {
+        if(MethodDeclarations.getMethodHeader().getReturnType().struct==Tab.noType){
+            Code.put(Code.exit);
+            Code.put(Code.return_);
+        }
     }
 }
