@@ -3,6 +3,7 @@ package rs.ac.bg.etf.pp1;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -22,6 +23,7 @@ public class Compiler {
     }
     public static void main(String args[]){
         try {
+            if(args.length<1) {System.err.println("Source file not specified"); return;}
             Lexer lexer=new Lexer(new FileReader(args[0]));
             String objectFileName=(args.length<2 ? "test/program.obj" : args[1]);
             logFile=new FileWriter("logs/mjlog.txt");
@@ -60,6 +62,8 @@ public class Compiler {
             } else {System.out.println("Compile errors found");}
             logPrintWriter.close();
             logFile.close();
+        } catch(FileNotFoundException e){
+            System.err.println("Source file not found");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
