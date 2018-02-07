@@ -14,11 +14,11 @@ int niz[];
 		return z + d;
 	}
 	
-	// int inkrement(int a) int pom; 
-	// {
-		// pom = 1;
-		// return sum(a,pom);
-	// }
+	int inkrement(int a) int pom; 
+	{
+		pom = 1;
+		return sum(a,pom);
+	}
 	
 	void main()
 	{
@@ -41,10 +41,10 @@ int niz[];
 			// else print(-1);
 		
 		
-		// niz = new int[3];
-		// niz[0] = 1;
-		// niz[1] = 2;
-		// niz[2] = sum(niz[1], niz[0])  + 1;
+		niz = new int[3];
+		niz[0] = 1;
+		niz[1] = 2;
+		niz[2] = sum(niz[1], niz[0])  + 1;
 		// if(niz[2] == 4) print(ord('A')); 
 		// else print(ord('a'));
 		

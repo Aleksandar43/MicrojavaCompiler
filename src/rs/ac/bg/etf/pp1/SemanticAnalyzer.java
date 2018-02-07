@@ -13,7 +13,7 @@ public class SemanticAnalyzer extends VisitorAdaptor{
     Struct tableBoolType=Tab.find("bool").getType();
     private Struct currentType;
     Stack<Character> opStack=new Stack<>();
-    private int methodFormalParameters=0;
+    private int methodFormalParameters=0,methodActualParameters=0;
     private Struct currentMethodType;
     private String semanticErrors="",semanticUsageDetections="";
     private DumpSymbolTableVisitor localVisitor;
@@ -372,5 +372,30 @@ public class SemanticAnalyzer extends VisitorAdaptor{
         if(currentMethodType!=Tab.noType){
             reportError(ReturnVoid.getLine(), "a value must be returned");
         }
+    }
+
+    @Override
+    public void visit(FactorFunctionCall FactorFunctionCall) {
+        Obj methodObj = Tab.find(FactorFunctionCall.getDesignator().obj.getName());
+        if(methodObj.equals(Tab.noObj) || methodObj.getKind()!=Obj.Meth){
+            reportError(FactorFunctionCall.getLine(), "undefined method '"+FactorFunctionCall.getDesignator().obj.getName()+"'");
+            FactorFunctionCall.struct=Tab.noType;
+        } else{
+            FactorFunctionCall.struct=FactorFunctionCall.getDesignator().obj.getType();
+            if(methodActualParameters!=methodObj.getLevel()){
+                reportError(FactorFunctionCall.getLine(), "wrong number of parameters");
+            }
+        }
+        methodActualParameters=0;
+    }
+
+    @Override
+    public void visit(OneActualParameter OneActualParameter) {
+        methodActualParameters++;
+    }
+
+    @Override
+    public void visit(MultipleActualParameters MultipleActualParameters) {
+        methodActualParameters++;
     }
 }

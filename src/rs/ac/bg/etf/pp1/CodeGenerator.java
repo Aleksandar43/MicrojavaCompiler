@@ -193,6 +193,7 @@ public class CodeGenerator extends VisitorAdaptor{
     
     @Override
     public void visit(MethodHeader MethodHeader) {
+        //MethodHeader.getMethodName().obj.setAdr(Code.pc);
         Code.put(Code.enter);
         Code.put(methodFormalParameters);
         Code.put(localVariables);
@@ -216,5 +217,12 @@ public class CodeGenerator extends VisitorAdaptor{
     public void visit(ReturnVoid ReturnVoid) {
         Code.put(Code.exit);
         Code.put(Code.return_);
+    }
+
+    @Override
+    public void visit(FactorFunctionCall FactorFunctionCall) {
+        int jumpAddress = FactorFunctionCall.getDesignator().obj.getAdr()-Code.pc;
+        Code.put(Code.call);
+        Code.put2(jumpAddress);
     }
 }
