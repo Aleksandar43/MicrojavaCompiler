@@ -225,4 +225,12 @@ public class CodeGenerator extends VisitorAdaptor{
         Code.put(Code.call);
         Code.put2(jumpAddress);
     }
+
+    @Override
+    public void visit(FunctionCall FunctionCall) {
+        int jumpAddress = FunctionCall.getDesignator().obj.getAdr()-Code.pc;
+        Code.put(Code.call);
+        Code.put2(jumpAddress);
+        if(FunctionCall.getDesignator().obj.getType()!=Tab.noType) Code.put(Code.pop);
+    }
 }

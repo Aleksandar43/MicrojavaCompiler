@@ -398,4 +398,17 @@ public class SemanticAnalyzer extends VisitorAdaptor{
     public void visit(MultipleActualParameters MultipleActualParameters) {
         methodActualParameters++;
     }
+
+    @Override
+    public void visit(FunctionCall FunctionCall) {
+        Obj methodObj = Tab.find(FunctionCall.getDesignator().obj.getName());
+        if(methodObj.equals(Tab.noObj) || methodObj.getKind()!=Obj.Meth){
+            reportError(FunctionCall.getLine(), "undefined method '"+FunctionCall.getDesignator().obj.getName()+"'");
+        } else{
+            if(methodActualParameters!=methodObj.getLevel()){
+                reportError(FunctionCall.getLine(), "wrong number of parameters");
+            }
+        }
+        methodActualParameters=0;
+    }
 }
