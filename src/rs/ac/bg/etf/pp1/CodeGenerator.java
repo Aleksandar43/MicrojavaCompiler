@@ -13,7 +13,7 @@ public class CodeGenerator extends VisitorAdaptor{
     Stack<Character> opStack=new Stack<>();
     Stack<Obj> designatorStack=new Stack<>();
     private int methodFormalParameters=0;
-    private int localVariables=0;
+    private int localVariables=0; //for methods, includes formal parameters
     @Override
     public void visit(Program Program) {
         Code.dataSize=Program.getProgramName().obj.getLocalSymbols().size();
@@ -195,7 +195,7 @@ public class CodeGenerator extends VisitorAdaptor{
     public void visit(MethodHeader MethodHeader) {
         Code.put(Code.enter);
         Code.put(methodFormalParameters);
-        Code.put(methodFormalParameters+localVariables);
+        Code.put(localVariables);
     }
 
     @Override
