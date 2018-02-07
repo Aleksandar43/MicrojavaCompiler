@@ -70,7 +70,7 @@ int niz[];
 		// print(eol);
 		
 		// print(sum (sum(niz[0], niz[1]), niz[2])); 
-			
+			print(ord('A'));print(chr(100));
 	}
 }
 

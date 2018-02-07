@@ -20,6 +20,27 @@ public class CodeGenerator extends VisitorAdaptor{
     }
 
     @Override
+    public void visit(ProgramName ProgramName) {
+        //chr() code
+        Obj chrObj = Tab.find("chr");
+        chrObj.setAdr(0);
+        Code.put(Code.enter);
+        Code.put(0);
+        Code.put(0);
+        Code.put(Code.exit);
+        Code.put(Code.return_);
+        
+        //ord() code
+        Obj ordObj = Tab.find("ord");
+        chrObj.setAdr(Code.pc);
+        Code.put(Code.enter);
+        Code.put(0);
+        Code.put(0);
+        Code.put(Code.exit);
+        Code.put(Code.return_);
+    }
+
+    @Override
     public void visit(MultiplicationOp MultiplicationOp) {
         opStack.push('*');
     }
