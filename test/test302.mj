@@ -14,11 +14,11 @@ int niz[];
 		return z + d;
 	}
 	
-	int inkrement(int a) int pom; 
-	{
-		pom = 1;
-		return sum(a,pom);
-	}
+	// int inkrement(int a) int pom; 
+	// {
+		// pom = 1;
+		// return sum(a,pom);
+	// }
 	
 	void main()
 	{

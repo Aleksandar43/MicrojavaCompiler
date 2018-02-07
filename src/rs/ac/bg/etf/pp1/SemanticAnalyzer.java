@@ -14,6 +14,7 @@ public class SemanticAnalyzer extends VisitorAdaptor{
     private Struct currentType;
     Stack<Character> opStack=new Stack<>();
     private int methodFormalParameters=0;
+    private Struct currentMethodType;
     private String semanticErrors="",semanticUsageDetections="";
     private DumpSymbolTableVisitor localVisitor;
     
@@ -208,6 +209,7 @@ public class SemanticAnalyzer extends VisitorAdaptor{
     public void visit(ReturnTypeVoid ReturnTypeVoid) {
         methodFormalParameters=0;
         ReturnTypeVoid.struct=Tab.noType;
+        currentMethodType=Tab.noType;
     }
 
     @Override
@@ -218,8 +220,10 @@ public class SemanticAnalyzer extends VisitorAdaptor{
         if(typeObj.equals(Tab.noObj)){
             reportError(ReturnTypeNonVoid.getLine(), "unknown type '"+typeName+"'");
             ReturnTypeNonVoid.struct=Tab.noType;
+            currentMethodType=Tab.noType;
         } else{
             ReturnTypeNonVoid.struct=typeObj.getType();
+            currentMethodType=typeObj.getType();
         }
     }
 
@@ -257,6 +261,7 @@ public class SemanticAnalyzer extends VisitorAdaptor{
 
     @Override
     public void visit(MethodDeclarations MethodDeclarations) {
+        //check return
         Tab.chainLocalSymbols(MethodDeclarations.getMethodHeader().getMethodName().obj);
         Tab.closeScope();
     }
@@ -346,6 +351,26 @@ public class SemanticAnalyzer extends VisitorAdaptor{
         Struct exprStruct = Read.getDesignator().obj.getType();
         if(!exprStruct.equals(Tab.intType) && !exprStruct.equals(Tab.charType) && !exprStruct.equals(tableBoolType)){
             reportError(Read.getLine(), "values can be read only into int, char and bool variables");
+        }
+    }
+
+    @Override
+    public void visit(ReturnNonVoid ReturnNonVoid) {
+        if(currentMethodType==Tab.noType){
+            reportError(ReturnNonVoid.getLine(), "method does not return a value");
+        } else if(!ReturnNonVoid.getExpr().struct.assignableTo(currentMethodType)){
+            SymbolTableVisitor stv1=new DumpSymbolTableVisitor();
+            stv1.visitStructNode(ReturnNonVoid.getExpr().struct);
+            SymbolTableVisitor stv2=new DumpSymbolTableVisitor();
+            stv2.visitStructNode(currentMethodType);
+            reportError(ReturnNonVoid.getLine(), "cannot return value of type '"+stv1.getOutput()+"', return type of method is '"+stv2.getOutput()+"'");
+        }
+    }
+
+    @Override
+    public void visit(ReturnVoid ReturnVoid) {
+        if(currentMethodType!=Tab.noType){
+            reportError(ReturnVoid.getLine(), "a value must be returned");
         }
     }
 }

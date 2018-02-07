@@ -205,4 +205,16 @@ public class CodeGenerator extends VisitorAdaptor{
             Code.put(Code.return_);
         }
     }
+
+    @Override
+    public void visit(ReturnNonVoid ReturnNonVoid) {
+        Code.put(Code.exit);
+        Code.put(Code.return_);
+    }
+
+    @Override
+    public void visit(ReturnVoid ReturnVoid) {
+        Code.put(Code.exit);
+        Code.put(Code.return_);
+    }
 }
